@@ -31,7 +31,13 @@
 *.out
 *.app
 
-DO_NOT_UPLOAD
-Tutorial6
-.vs
-out
+# Local builds
+build*
+Debug*
+Release*
+
+*.ipch
+*.suo
+*VC.db
+*.vcxproj
+*.vcxproj.filters
