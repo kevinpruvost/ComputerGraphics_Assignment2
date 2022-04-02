@@ -106,11 +106,6 @@ int main()
 	entity.eulerAngles.y = 50.0f;
 	entity.eulerAngles.x = 70.0f;
 
-	//std::cout << glm::to_string(model) << std::endl;
-	//std::cout << glm::to_string(entity.getModelMatrix()) << std::endl;
-
-	model = entity.getModelMatrix();
-
 	bool cameraLock = false;
 
 	// GUI
@@ -133,17 +128,6 @@ int main()
 		ImGui::End();
 		return true;
 	});
-
-	view = camera.GetViewMatrix();
-	projection = camera.GetProjectionMatrix(window.windowWidth(), window.windowHeight());
-
-	// get uniform locations
-	GLint viewLoc = glGetUniformLocation(pointShader.program, "view");
-	GLint projLoc = glGetUniformLocation(pointShader.program, "projection");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	window.Loop([&]() {
 		// Render
@@ -206,9 +190,7 @@ int main()
 			camera.SetWindowDimensions(window.windowWidth(), window.windowHeight());
 
 		// Camera/View transformation
-		viewProj = camera.GetProjViewMatrixUbo();
-		view = camera.GetViewMatrix();
-		projection = camera.GetProjectionMatrix(window.windowWidth(), window.windowHeight());
+		camera.GetProjViewMatrixUbo();
 
 		// Wireframe Color change
 		if (window.key(GLFW_KEY_P) == InputKey::JustPressed)
@@ -228,31 +210,20 @@ int main()
 	return EXIT_SUCCESS;
 }
 
-#include <chrono>
-
 void drawFaces(Shader& shader, GLuint VAO, int num)
 {
-	OpenGL_Timer timer;
-	timer.Start();
+	shader.Use();
 
-	for (int i = 0; i < 10000; ++i)
-	{
-		shader.Use();
+	//// get uniform locations
+	GLint modelLoc = glGetUniformLocation(shader.program, "model");
 
-		//// get uniform locations
-		GLint modelLoc = glGetUniformLocation(shader.program, "model");
+	// pass uniform values to shader
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		// pass uniform values to shader
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-		glBindVertexArray(VAO);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDrawArrays(GL_TRIANGLES, 0, num);
-		glBindVertexArray(0);
-	}
-
-	auto nanoseconds = timer.End();
-	std::cout << "perf = " << nanoseconds / 1000000 << " ms" << std::endl;
+	glBindVertexArray(VAO);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDrawArrays(GL_TRIANGLES, 0, num);
+	glBindVertexArray(0);
 }
 
 void drawWireframe(Shader & shader, GLuint VAO, int num)

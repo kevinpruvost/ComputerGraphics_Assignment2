@@ -52,17 +52,12 @@ Camera::~Camera()
 
 glm::mat4 Camera::GetViewMatrix()
 {
-    return glm::lookAt(this->Position, this->Position + this->Front, this->Up);
+    return __view;
 }
 
-glm::mat4 Camera::GetProjectionMatrix(int windowWidth, int windowHeight)
+glm::mat4 Camera::GetProjectionMatrix()
 {
-    return glm::perspective(
-        glm::radians(__fov), // FOV
-        (GLfloat)windowWidth / (GLfloat)windowHeight, // Aspect Ratio
-        __zNear,  // zNear
-        __zFar // zFar
-    );
+    return __projection;
 }
 
 GLuint Camera::GetProjViewMatrixUbo()

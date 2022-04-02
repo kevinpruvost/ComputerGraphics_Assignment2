@@ -59,18 +59,16 @@ public:
     ~Camera();
 
     /**
-     * @brief Calculates the view matrix using Eular Angles and the LookAt Matrix
+     * @brief Returns view matrix
      * @return View Matrix
     */
     glm::mat4 GetViewMatrix();
 
     /**
-     * @brief 
-     * @param windowWidth 
-     * @param windowHeight 
+     * @brief Returns projection matrix
      * @return Projection Matrix
     */
-    glm::mat4 GetProjectionMatrix(int windowWidth, int windowHeight);
+    glm::mat4 GetProjectionMatrix();
 
     /**
      * @brief Refreshes Uniform Buffer Object if needed and returns its id

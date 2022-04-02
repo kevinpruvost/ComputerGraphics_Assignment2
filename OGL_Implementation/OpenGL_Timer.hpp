@@ -18,7 +18,15 @@ public:
     */
     OpenGL_Timer();
 
+    /**
+     * @brief Starts Timer
+    */
     void Start();
+
+    /**
+     * @brief Ends timer and returns nanoseconds passed
+     * @return time in ns
+    */
     GLuint64 End();
 
 public:

@@ -29,7 +29,9 @@ bool Obj::TryLoad(const char * fileName)
 	// ensures ifstream objects can throw exceptions:
 	in.exceptions(std::ifstream::badbit);
 	in.open(fileName, std::ios::in);
-	
+	if (!in.is_open())
+		return false;
+
 	std::string buf;
 	std::string cmd;
 	in.exceptions(std::istream::badbit);
@@ -80,7 +82,7 @@ bool Obj::TryLoad(const char * fileName)
 				std::cerr << "Warning: unsupported line type starting with '" << buf[0] << "'" << std::endl;
 				return false;
 			}
-		} catch (const std::istream::failure & e)
+		} catch (const std::exception & e)
 		{
 			std::cerr << "Reading obj file error: " << e.what() << std::endl;
 			return false;
