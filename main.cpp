@@ -27,6 +27,7 @@
 #include "OGL_Implementation\Mesh.hpp"
 #include "OGL_Implementation\GUI.hpp"
 #include "OGL_Implementation\Entity.hpp"
+#include "OGL_Implementation\OpenGL_Timer.hpp"
 
 // buffer binding & drawing functions
 GLsizei bindFaces(GLuint VAO, GLuint VBO, const Obj& obj);
@@ -37,7 +38,6 @@ void drawVertices(Shader& shader, GLuint VAO, int num);
 void drawWireframe(Shader & shader, GLuint VAO, int num);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 bool firstMouse = true;
 
 // hyper-parameters
@@ -63,6 +63,7 @@ constexpr const glm::vec3 GLM_LEFT = -GLM_RIGHT;
 glm::mat4 model(1);
 glm::mat4 view(1);
 glm::mat4 projection(1);
+GLuint viewProj;
 
 // object file path
 const char* const OBJ_FILE = "resources/eight.uniform.obj";
@@ -71,13 +72,17 @@ const char* const OBJ_FILE = "resources/eight.uniform.obj";
 int main()
 {
 	Window window;
-	if (!window.Init("Assignment 1: Pruvost Kevin 2021400603"))
+	if (!window.Init("Assignment 2: Pruvost Kevin 2021400603", "resources/tsinghua_icon.png"))
 		return EXIT_FAILURE;
 
 	// Build and compile our shader program
 	Shader pointShader("resources/point.vert.glsl", "resources/point.frag.glsl");
 	Shader faceShader("resources/face.vert.glsl", "resources/face.frag.glsl");
 	Shader wireframeShader("resources/wireframe.vert.glsl", "resources/wireframe.frag.glsl");
+
+	pointShader.AddGlobalUbo(0, "ViewProj");
+	faceShader.AddGlobalUbo(0, "ViewProj");
+	wireframeShader.AddGlobalUbo(0, "ViewProj");
 
 	// load model
 	Obj my_obj;
@@ -89,7 +94,7 @@ int main()
 
 	Mesh mesh = GenerateMesh(my_obj);
 
-	Camera camera(0.0f, 0.0f, 3.0f);
+	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 3.0f);
 
 	// Create transformations
 	model = glm::rotate(
@@ -128,6 +133,17 @@ int main()
 		ImGui::End();
 		return true;
 	});
+
+	view = camera.GetViewMatrix();
+	projection = camera.GetProjectionMatrix(window.windowWidth(), window.windowHeight());
+
+	// get uniform locations
+	GLint viewLoc = glGetUniformLocation(pointShader.program, "view");
+	GLint projLoc = glGetUniformLocation(pointShader.program, "projection");
+
+	// pass uniform values to shader
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	window.Loop([&]() {
 		// Render
@@ -185,7 +201,12 @@ int main()
 				camera.ProcessMouseScroll(window.mouseWheelOffset().y);
 		}
 
+		// Window Dimensions changed
+		if (window.windowDimensionsHasChanged())
+			camera.SetWindowDimensions(window.windowWidth(), window.windowHeight());
+
 		// Camera/View transformation
+		viewProj = camera.GetProjViewMatrixUbo();
 		view = camera.GetViewMatrix();
 		projection = camera.GetProjectionMatrix(window.windowWidth(), window.windowHeight());
 
@@ -207,24 +228,31 @@ int main()
 	return EXIT_SUCCESS;
 }
 
+#include <chrono>
+
 void drawFaces(Shader& shader, GLuint VAO, int num)
 {
-	shader.Use();
+	OpenGL_Timer timer;
+	timer.Start();
 
-	// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.program, "model");
-	GLint viewLoc = glGetUniformLocation(shader.program, "view");
-	GLint projLoc = glGetUniformLocation(shader.program, "projection");
+	for (int i = 0; i < 10000; ++i)
+	{
+		shader.Use();
 
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		//// get uniform locations
+		GLint modelLoc = glGetUniformLocation(shader.program, "model");
 
-	glBindVertexArray(VAO);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawArrays(GL_TRIANGLES, 0, num);
-	glBindVertexArray(0);
+		// pass uniform values to shader
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		glBindVertexArray(VAO);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glDrawArrays(GL_TRIANGLES, 0, num);
+		glBindVertexArray(0);
+	}
+
+	auto nanoseconds = timer.End();
+	std::cout << "perf = " << nanoseconds / 1000000 << " ms" << std::endl;
 }
 
 void drawWireframe(Shader & shader, GLuint VAO, int num)
@@ -233,13 +261,9 @@ void drawWireframe(Shader & shader, GLuint VAO, int num)
 
 	// get uniform locations
 	GLint modelLoc = glGetUniformLocation(shader.program, "model");
-	GLint viewLoc = glGetUniformLocation(shader.program, "view");
-	GLint projLoc = glGetUniformLocation(shader.program, "projection");
 
 	// pass uniform values to shader
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	// use the same color for all points
 	GLint colorLoc = glGetUniformLocation(shader.program, "ourColor");
@@ -255,15 +279,11 @@ void drawVertices(Shader& shader, GLuint VAO, int num)
 {
 	shader.Use();
 
-	// get uniform locations
+	//// get uniform locations
 	GLint modelLoc = glGetUniformLocation(shader.program, "model");
-	GLint viewLoc = glGetUniformLocation(shader.program, "view");
-	GLint projLoc = glGetUniformLocation(shader.program, "projection");
 
-	// pass uniform values to shader
+	//// pass uniform values to shader
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	// use the same color for all points
 	GLint colorLoc = glGetUniformLocation(shader.program, "ourColor");

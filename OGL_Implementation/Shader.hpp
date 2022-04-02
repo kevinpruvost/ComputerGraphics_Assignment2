@@ -33,6 +33,8 @@ public:
 	*/
 	void Use();
 
+	void AddGlobalUbo(GLuint bindingPoint, const char * bindingPointName);
+
 public:
 	/**
 	 * @brief Shader program id

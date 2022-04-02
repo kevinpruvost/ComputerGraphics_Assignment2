@@ -10,6 +10,9 @@
 // Project includes
 #include "Input.hpp"
 
+// C++ includes
+#include <vector>
+
 /**
  * @brief Manages everything about the OpenGL window.
 */
@@ -24,7 +27,7 @@ public:
     * @param windowName
     * @return true if initialization has succeeded, false otherwise
     */
-    bool Init(const char * windowName = "Window");
+    bool Init(const char * windowName = "Window", const char * iconPath = nullptr);
     /**
      * @brief Launches the window loop and the code contained in the lambda function.
      * @param lambda
@@ -46,6 +49,11 @@ public:
      * @return window height
     */
     int windowHeight() const;
+    /**
+     * @brief window dimensions have changed
+     * @return has changed
+    */
+    bool windowDimensionsHasChanged() const;
 
 public:
     /**

@@ -7,7 +7,7 @@
  *********************************************************************/
 #include "Mesh.hpp"
 
-std::vector<Mesh_Base> meshesDB;
+std::vector<std::unique_ptr<Mesh_Base>> meshesDB;
 
 Mesh_Base::Mesh_Base(const Obj & obj)
 {
@@ -18,6 +18,10 @@ Mesh_Base::Mesh_Base(const Obj & obj)
 	bindVertices(obj);
 	// bind VAO and VBO for drawing faces
 	bindFaces(obj);
+}
+
+Mesh_Base::Mesh_Base()
+{
 }
 
 Mesh_Base::~Mesh_Base()
@@ -95,16 +99,16 @@ Mesh::Mesh(const uint16_t meshId)
 }
 
 GLuint Mesh::meshId() const { return __meshId; }
-GLuint Mesh::verticesVAO() const { return meshesDB[__meshId].verticesVAO; }
-GLuint Mesh::facesVAO() const { return meshesDB[__meshId].facesVAO; }
-GLuint Mesh::verticesVBO() const { return meshesDB[__meshId].verticesVBO; }
-GLuint Mesh::facesVBO() const { return meshesDB[__meshId].facesVBO; }
-GLuint Mesh::verticesNVert() const { return meshesDB[__meshId].verticesNVert; }
-GLuint Mesh::facesNVert() const { return meshesDB[__meshId].facesNVert; }
+GLuint Mesh::verticesVAO() const { return meshesDB[__meshId]->verticesVAO; }
+GLuint Mesh::facesVAO() const { return meshesDB[__meshId]->facesVAO; }
+GLuint Mesh::verticesVBO() const { return meshesDB[__meshId]->verticesVBO; }
+GLuint Mesh::facesVBO() const { return meshesDB[__meshId]->facesVBO; }
+GLuint Mesh::verticesNVert() const { return meshesDB[__meshId]->verticesNVert; }
+GLuint Mesh::facesNVert() const { return meshesDB[__meshId]->facesNVert; }
 
 Mesh GenerateMesh(const Obj & obj)
 {
-	meshesDB.emplace_back(obj);
+	meshesDB.emplace_back(new Mesh_Base(obj));
 	return Mesh(meshesDB.size() - 1);
 }
 

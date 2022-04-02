@@ -7,9 +7,13 @@
  *********************************************************************/
 #include "Window.hpp"
 
+// Project includes
+#include <SOIL.h>
+
 // Window dimensions
 static int WIDTH = 1000;
 static int HEIGHT = 750;
+static bool windowDimensionsChanged_ = false;
 
 Window::Window()
 	: window { nullptr }
@@ -24,7 +28,7 @@ Window::~Window()
 	if (window) glfwDestroyWindow(window);
 }
 
-bool Window::Init(const char * windowName)
+bool Window::Init(const char * windowName, const char * iconPath)
 {
 	// Init GLFW
 	if ((__initialized = glfwInit()) == GL_FALSE)
@@ -39,11 +43,24 @@ bool Window::Init(const char * windowName)
 		return false;
 	glfwMakeContextCurrent(window);
 
+	// Sets icon if iconPath != nullptr
+	if (iconPath)
+	{
+		GLFWimage icon;
+		icon.pixels = SOIL_load_image(iconPath, &icon.width, &icon.height, nullptr, SOIL_LOAD_RGBA);
+		if (icon.pixels)
+		{
+			glfwSetWindowIcon(window, 1, &icon);
+			SOIL_free_image_data(icon.pixels);
+		}
+	}
+
 	// Set the required callback functions
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow * window, int width, int height) {
 		WIDTH = width;
 		HEIGHT = height;
 		glViewport(0, 0, width, height);
+		windowDimensionsChanged_ = true;
 	});
 
 	// Input related
@@ -83,6 +100,8 @@ bool Window::Loop(const std::function<bool()> & lambda)
 		if (!lambda())
 			return false;
 		
+		windowDimensionsChanged_ = false;
+
 		// Swap the screen buffers
 		glfwSwapBuffers(window);
 	}
@@ -99,4 +118,9 @@ int Window::windowWidth() const
 int Window::windowHeight() const
 {
 	return HEIGHT;
+}
+
+bool Window::windowDimensionsHasChanged() const
+{
+	return windowDimensionsChanged_;
 }

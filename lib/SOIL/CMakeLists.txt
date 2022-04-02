@@ -17,6 +17,7 @@ file (GLOB SOIL_HEADERS src/*.h)
 
 add_library (SOIL ${SOIL_SOURCES} ${SOIL_HEADERS})
 target_link_libraries (SOIL ${LIBRARIES})
+target_include_directories(SOIL PUBLIC src/)
 
 install (TARGETS SOIL
 	LIBRARY DESTINATION lib
@@ -28,3 +29,5 @@ if (SOIL_BUILD_TESTS)
 	target_link_libraries (test_SOIL SOIL)
 	install (TARGETS SOIL test_SOIL RUNTIME DESTINATION bin)
 endif ()
+
+export(PACKAGE SOIL)

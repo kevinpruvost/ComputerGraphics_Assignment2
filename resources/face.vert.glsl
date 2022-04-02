@@ -9,8 +9,10 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 aColor;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+layout (std140) uniform ViewProj
+{
+	mat4 viewProj;
+};
 
 out vec3 ourColor;
 out vec3 randColor;
@@ -18,6 +20,6 @@ out vec3 randColor;
 
 void main()
 {
-	gl_Position = projection * view * model * vec4(position, 1.0f);
+	gl_Position = viewProj * model * vec4(position, 1.0f);
 	randColor = aColor;
 }

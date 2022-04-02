@@ -8,12 +8,15 @@
 layout (location = 0) in vec3 position;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+layout (std140) uniform ViewProj
+{
+	mat4 viewProj;
+};
+
 
 out vec3 ourColor;
 
 void main()
 {
-	gl_Position = projection * view * model * vec4(position, 1.0f);
+	gl_Position = viewProj * model * vec4(position, 1.0f);
 }

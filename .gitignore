@@ -31,7 +31,11 @@
 *.out
 *.app
 
-DO_NOT_UPLOAD
+*.pdb
+imgui.ini
 Tutorial6
+
+DO_NOT_UPLOAD
+
 .vs
 out

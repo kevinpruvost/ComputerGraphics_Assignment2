@@ -25,7 +25,10 @@ public:
      * @param obj 
     */
     Mesh_Base(const Obj & obj);
-    ~Mesh_Base();
+protected:
+    Mesh_Base();
+public:
+    virtual ~Mesh_Base();
 
 private:
     void bindFaces(const Obj & obj);

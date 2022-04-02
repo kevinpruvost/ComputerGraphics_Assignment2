@@ -7,23 +7,9 @@
  *********************************************************************/
 #include "Camera.hpp"
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
-    : Front{ glm::vec3(0.0f, 0.0f, -1.0f) }
-    , MovementSpeed{ CameraDefault_Speed }
-    , MouseSensitivity{ CameraDefault_Sensitivity }
-    , Zoom{ CameraDefault_Zoom }
-    , Position{ position }
-    , WorldUp{ up }
-    , Yaw{ yaw }
-    , Pitch{ pitch }
-    , fov { 45.0f }
-    , zNear { 0.1f }
-    , zFar { 100.0f }
-{
-    updateCameraVectors();
-}
-
-Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch)
+Camera::Camera(int windowWidth, int windowHeight,
+    GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ,
+    GLfloat yaw, GLfloat pitch)
     : Front{ glm::vec3(0.0f, 0.0f, -1.0f) }
     , MovementSpeed{ CameraDefault_Speed }
     , MouseSensitivity{ CameraDefault_Sensitivity }
@@ -32,11 +18,36 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat up
     , WorldUp{ glm::vec3(upX, upY, upZ) }
     , Yaw{ yaw }
     , Pitch{ pitch }
-    , fov{ 45.0f }
-    , zNear{ 0.1f }
-    , zFar{ 100.0f }
+    , __fov{ 45.0f }
+    , __zNear{ 0.1f }
+    , __zFar{ 100.0f }
+    , __hasMoved{ true }
+    , __uboProjView{ 0 }
+    , __wWidth{ windowWidth }
+    , __wHeight{ windowHeight }
 {
     updateCameraVectors();
+    
+    // Allocating UBO ViewProj
+    glGenBuffers(1, &__uboProjView);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, __uboProjView);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    // Binds buffer to a specific binding point so that it'll be used at this exact place
+    // by shaders
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, __uboProjView, 0, sizeof(glm::mat4));
+}
+
+Camera::Camera(int windowWidth, int windowHeight, glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
+    : Camera(windowWidth, windowHeight, position.x, position.y, position.z, up.x, up.y, up.z, yaw, pitch)
+{
+}
+
+Camera::~Camera()
+{
+    glDeleteBuffers(1, &__uboProjView);
 }
 
 glm::mat4 Camera::GetViewMatrix()
@@ -47,15 +58,45 @@ glm::mat4 Camera::GetViewMatrix()
 glm::mat4 Camera::GetProjectionMatrix(int windowWidth, int windowHeight)
 {
     return glm::perspective(
-        glm::radians(fov), // FOV
+        glm::radians(__fov), // FOV
         (GLfloat)windowWidth / (GLfloat)windowHeight, // Aspect Ratio
-        zNear,  // zNear
-        zFar // zFar
+        __zNear,  // zNear
+        __zFar // zFar
     );
+}
+
+GLuint Camera::GetProjViewMatrixUbo()
+{
+    if (__hasMoved || __hasReshaped)
+    {
+        if (__hasMoved)
+        {
+            __view = glm::lookAt(this->Position, this->Position + this->Front, this->Up);
+            __hasMoved = false;
+        }
+        if (__hasReshaped)
+        {
+            __projection = __projection = glm::perspective(
+                glm::radians(__fov), // FOV
+                (GLfloat)__wWidth / (GLfloat)__wHeight, // Aspect Ratio
+                __zNear,  // zNear
+                __zFar // zFar
+            );
+            __hasReshaped = false;
+        }
+
+        // Reassign viewProj matrix
+        glBindBuffer(GL_UNIFORM_BUFFER, __uboProjView);
+        const auto viewProj = __projection * __view;
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewProj));
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+    return __uboProjView;
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)
 {
+    __hasMoved = true;
     GLfloat velocity = this->MovementSpeed * deltaTime;
     switch (direction)
     {
@@ -109,6 +150,41 @@ void Camera::ProcessMouseScroll(GLfloat yoffset)
         this->Zoom = 1.0f;
     if (this->Zoom >= 45.0f)
         this->Zoom = 45.0f;
+    __hasMoved = true;
+}
+
+void Camera::Reshape(int windowWidth, int windowHeight, float fov, float zNear, float zFar)
+{
+    __wWidth = windowWidth;
+    __wHeight = windowHeight;
+    __fov = fov;
+    __zNear = zNear;
+    __zFar = zFar;
+    __hasReshaped = true;
+}
+
+const float & Camera::GetFov() const { return __fov; }
+const float & Camera::GetZNear() const { return __zNear; }
+const float & Camera::GetZFar() const { return __zFar; }
+
+void Camera::SetFov(float fov)
+{
+    __fov = fov;
+    __hasReshaped = true;
+}
+
+void Camera::SetZNearFar(float zNear, float zFar)
+{
+    __zNear = zNear;
+    __zFar = zFar;
+    __hasReshaped = true;
+}
+
+void Camera::SetWindowDimensions(int windowWidth, int windowHeight)
+{
+    __wWidth = windowWidth;
+    __wHeight = windowHeight;
+    __hasReshaped = true;
 }
 
 void Camera::updateCameraVectors()
@@ -122,4 +198,5 @@ void Camera::updateCameraVectors()
     // Also re-calculate the Right and Up vector
     this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     this->Up = glm::normalize(glm::cross(this->Right, this->Front));
+    __hasMoved = true;
 }

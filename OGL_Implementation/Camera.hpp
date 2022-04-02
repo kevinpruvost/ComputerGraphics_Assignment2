@@ -14,6 +14,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 /**
  * @brief Defines direction the Camera follows.
@@ -41,7 +42,7 @@ public:
      * @param yaw (y axis)
      * @param pitch (x axis)
     */
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = CameraDefault_Yaw, GLfloat pitch = CameraDefault_Pitch);
+    Camera(int windowWidth, int windowHeight, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = CameraDefault_Yaw, GLfloat pitch = CameraDefault_Pitch);
     /**
      * @brief Constructor with scalar values
      * @param posX 
@@ -53,7 +54,9 @@ public:
      * @param yaw (y axis)
      * @param pitch (x axis)
     */
-    Camera(GLfloat posX = 0.0f, GLfloat posY = 0.0f, GLfloat posZ = 0.0f, GLfloat upX = 0.0f, GLfloat upY = 1.0f, GLfloat upZ = 0.0f, GLfloat yaw = CameraDefault_Yaw, GLfloat pitch = CameraDefault_Pitch);
+    Camera(int windowWidth, int windowHeight, GLfloat posX = 0.0f, GLfloat posY = 0.0f, GLfloat posZ = 0.0f, GLfloat upX = 0.0f, GLfloat upY = 1.0f, GLfloat upZ = 0.0f, GLfloat yaw = CameraDefault_Yaw, GLfloat pitch = CameraDefault_Pitch);
+
+    ~Camera();
 
     /**
      * @brief Calculates the view matrix using Eular Angles and the LookAt Matrix
@@ -68,6 +71,12 @@ public:
      * @return Projection Matrix
     */
     glm::mat4 GetProjectionMatrix(int windowWidth, int windowHeight);
+
+    /**
+     * @brief Refreshes Uniform Buffer Object if needed and returns its id
+     * @return View Matrix Uniform Buffer Object Id
+    */
+    GLuint GetProjViewMatrixUbo();
 
     /**
      * @brief Processes input received from any keyboard-like input system.
@@ -91,8 +100,59 @@ public:
     */
     void ProcessMouseScroll(GLfloat yoffset);
 
+    /**
+     * @brief Reshapes projection matrix
+     * @param windowWidth 
+     * @param windowHeight 
+     * @param fov 
+     * @param zNear 
+     * @param zFar 
+    */
+    void Reshape(int windowWidth, int windowHeight, float fov, float zNear, float zFar);
+
+    /**
+     * @brief Returns Field of view
+     * @return fov
+    */
+    const float & GetFov() const;
+    /**
+     * @brief Returns zNear
+     * @return zNear
+    */
+    const float & GetZNear() const;
+    /**
+     * @brief Returns zFar
+     * @return zFar
+    */
+    const float & GetZFar() const;
+    /**
+     * @brief Sets new FOV
+     * /!\ Call Camera::Reshape() if you wish to modify multiple camera
+     * parameters at the same time
+     * @param fov 
+    */
+    void SetFov(float fov);
+    /**
+     * @brief Sets new ZNear & ZFar
+     * /!\ Call Camera::Reshape() if you wish to modify multiple camera
+     * parameters at the same time
+     * @param zNear
+     * @param zFar
+    */
+    void SetZNearFar(float zNear, float zFar);
+    /**
+     * @brief Sets new Window dimensions
+     * /!\ Call Camera::Reshape() if you wish to modify multiple camera
+     * parameters at the same time
+     * @param windowWidth 
+     * @param windowHeight 
+    */
+    void SetWindowDimensions(int windowWidth, int windowHeight);
+
 private:
-    // Calculates the front vector from the Camera's (updated) Eular Angles
+    /**
+     * @brief Calculates the front vector from the Camera's (updated) Eular Angles
+    */
     void updateCameraVectors();
 
 public:
@@ -109,7 +169,6 @@ public:
     GLfloat MovementSpeed;
     GLfloat MouseSensitivity;
     GLfloat Zoom;
-    float fov, zNear, zFar;
 
 private:
     // Default camera values
@@ -118,4 +177,10 @@ private:
     static constexpr const GLfloat CameraDefault_Speed = 3.0f;
     static constexpr const GLfloat CameraDefault_Sensitivity = 0.25f;
     static constexpr const GLfloat CameraDefault_Zoom = 45.0f;
+
+    float __fov, __zNear, __zFar;
+    int __wWidth, __wHeight;
+    bool __hasMoved, __hasReshaped;
+    GLuint __uboProjView;
+    glm::mat4 __projection, __view;
 };

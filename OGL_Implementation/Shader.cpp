@@ -86,3 +86,9 @@ void Shader::Use()
 {
 	glUseProgram(program);
 }
+
+void Shader::AddGlobalUbo(GLuint bindingPoint, const char * bindingPointName)
+{
+	GLuint id = glGetUniformBlockIndex(program, bindingPointName);
+	glUniformBlockBinding(program, id, bindingPoint);
+}
