@@ -36,6 +36,7 @@ public:
     bool Loop(const std::function<bool()> & lambda);
     /**
      * @brief Calculates period between the current frame & the last frame
+     * in seconds
      * @return Delta Time from last frame
     */
     float deltaTime() const;

@@ -7,6 +7,9 @@
  * \date   March, 26 2022
  *********************************************************************/
 
+// C++ includes
+#include <format>
+
 // GLAD
 #include <glad/glad.h>
 
@@ -28,12 +31,10 @@
 #include "OGL_Implementation\GUI.hpp"
 #include "OGL_Implementation\Entity.hpp"
 #include "OGL_Implementation\OpenGL_Timer.hpp"
+#include "OGL_Implementation\DebugInfo\FpsCounter.hpp"
 
 // buffer binding & drawing functions
-GLsizei bindFaces(GLuint VAO, GLuint VBO, const Obj& obj);
 void drawFaces(Shader& shader, GLuint VAO, int num);
-
-GLsizei bindVertices(GLuint VAO, GLuint VBO, const Obj& obj);
 void drawVertices(Shader& shader, GLuint VAO, int num);
 void drawWireframe(Shader & shader, GLuint VAO, int num);
 
@@ -116,9 +117,10 @@ int main()
 		ImGui::SetNextWindowPos(
 			{ImGui::GetIO().DisplaySize.x - 20.0f - 300.0f, 20.0f},
 			ImGuiCond_::ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize({ 300.0f, 125.0f }, ImGuiCond_::ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize({ 300.0f, 150.0f }, ImGuiCond_::ImGuiCond_FirstUseEver);
 		ImGui::Begin("Object Properties:");
 
+		ImGui::Text(std::format("FPS: {}", GetFpsCount(window.deltaTime(), 0.5f)).c_str());
 		ImGui::SliderFloat3("Position", glm::value_ptr(entity.pos), -1.0f, 1.0f);
 		ImGui::SliderFloat3("Rotation", glm::value_ptr(entity.eulerAngles), 0.0f, 360.0f);
 		ImGui::SliderFloat3("Scale", glm::value_ptr(entity.scale), 0.05f, 3.0f);

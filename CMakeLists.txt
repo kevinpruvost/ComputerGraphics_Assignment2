@@ -8,6 +8,26 @@ project ("Assignment2")
 # C++ Standard Version
 set(CMAKE_CXX_STANDARD 20)
 
+######################################
+## C++ Compiling Flags
+set(CMAKE_CXX_STANDARD 20)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # using Clang
+    set(CMAKE_CXX_FLAGS         "")
+    set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")          # Debug + Compile Time Optimization
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")             # Runtime Optimization
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # using GCC
+    set(CMAKE_CXX_FLAGS         "")
+    set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")          # Debug + Compile Time Optimization
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")             # Runtime Optimization
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # using Visual Studio C++
+    set(CMAKE_CXX_FLAGS         "")
+    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -Od -DEBUG")      # Debug + Compile Time Optimization
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")    # Runtime Optimization
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR})
 
@@ -18,14 +38,20 @@ add_subdirectory("lib")
 add_subdirectory("Documentation")
 
 # Assignment2 Executable
-file (GLOB ASSIGNMENT_SOURCES OGL_Implementation/*.cpp)
-file (GLOB ASSIGNMENT_HEADERS OGL_Implementation/*.hpp)
+file (GLOB ASSIGNMENT_SOURCES
+    OGL_Implementation/*.cpp
+    OGL_Implementation/DebugInfo/*.cpp
+)
+file (GLOB ASSIGNMENT_HEADERS
+    OGL_Implementation/*.hpp
+    OGL_Implementation/DebugInfo/*.hpp
+)
 
 add_executable(Assignment2
     "main.cpp"
     ${ASSIGNMENT_SOURCES}
     ${ASSIGNMENT_HEADERS}
- "OGL_Implementation/OpenGL_Timer.hpp" "OGL_Implementation/OpenGL_Timer.cpp")
+)
 
 # Linking libraries to Assignment2
 target_link_libraries(Assignment2 opengl32 glad glfw glm ImGui SOIL
