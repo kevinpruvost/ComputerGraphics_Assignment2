@@ -1,8 +1,0 @@
-
-STARTING LOG SESSION: 2022-04-03 13:29:48---------------------------------------------------------------
-[Mesh_Base::Mesh_Base, Line 15]: Constructed
-[Mesh_Obj::Mesh_Obj, Line 15]: Constructed
-[Mesh_Obj::~Mesh_Obj, Line 28]: Destroyed
-[Mesh_Base::~Mesh_Base, Line 20]: Destroyed
-
-ENDING LOG SESSION:   2022-04-03 13:29:49---------------------------------------------------------------
