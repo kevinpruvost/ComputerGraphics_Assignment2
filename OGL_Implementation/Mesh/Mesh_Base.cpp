@@ -12,12 +12,12 @@
 
 Mesh_Base::Mesh_Base()
 {
-	Log::Print(Log::LogMainFileName, "Mesh_Base constructor\n");
+	LOG_PRINT(Log::LogMainFileName, "Constructed\n");
 }
 
 Mesh_Base::~Mesh_Base()
 {
-	Log::Print(Log::LogMainFileName, "Mesh_Base destructor\n");
+	LOG_PRINT(Log::LogMainFileName, "Destroyed\n");
 }
 
 GLuint Mesh_Base::GetVerticesVAO()
