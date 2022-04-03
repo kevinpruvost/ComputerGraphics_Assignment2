@@ -17,59 +17,7 @@
 // Glad includes
 #include <glad/glad.h>
 
-/**
- * @brief Contains information about Tri Faces.
-*/
-struct TriFace
-{
-	int v[3];
-	float c[3];
-
-	/**
-	 * @brief Split array constructor
-	 * @param f0 
-	 * @param f1 
-	 * @param f2 
-	 * @param c0 
-	 * @param c1 
-	 * @param c2 
-	*/
-	TriFace(int f0, int f1, int f2, float c0, float c1, float c2)
-		: v{ f0, f1, f2 }
-		, c{ c0, c1, c2 }
-	{
-	}
-
-	/** Array constructor
-	 * @brief 
-	 * @param fd 
-	 * @param cd 
-	*/
-	TriFace(int fd[3], float cd[3])
-		: v{fd[0], fd[1], fd[2]}
-		, c{cd[0], cd[1], cd[2]}
-	{
-	}
-
-	int& operator[](int idx)
-	{
-		return v[idx];
-	}
-
-	const int& operator[](int idx) const
-	{
-		return v[idx];
-	}
-};
-
-/**
- * @brief Contains information about vertices.
-*/
-struct Vertex
-{
-	GLfloat x, y, z;
-	Vertex(GLfloat x_, GLfloat y_, GLfloat z_) : x(x_), y(y_), z(z_) {}
-};
+#include "Mesh/Geometry.hpp"
 
 /**
  * @brief Manages parsing and loading of .obj files.

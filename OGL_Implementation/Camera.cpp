@@ -22,6 +22,7 @@ Camera::Camera(int windowWidth, int windowHeight,
     , __zNear{ 0.1f }
     , __zFar{ 100.0f }
     , __hasMoved{ true }
+    , __hasReshaped{ true }
     , __uboProjView{ 0 }
     , __wWidth{ windowWidth }
     , __wHeight{ windowHeight }
@@ -47,7 +48,8 @@ Camera::Camera(int windowWidth, int windowHeight, glm::vec3 position, glm::vec3 
 
 Camera::~Camera()
 {
-    glDeleteBuffers(1, &__uboProjView);
+    if (glIsBuffer(__uboProjView))
+        glDeleteBuffers(1, &__uboProjView);
 }
 
 glm::mat4 Camera::GetViewMatrix()
@@ -60,6 +62,8 @@ glm::mat4 Camera::GetProjectionMatrix()
     return __projection;
 }
 
+#include "OGL_Implementation\DebugInfo\Log.hpp"
+
 GLuint Camera::GetProjViewMatrixUbo()
 {
     if (__hasMoved || __hasReshaped)
@@ -71,7 +75,7 @@ GLuint Camera::GetProjViewMatrixUbo()
         }
         if (__hasReshaped)
         {
-            __projection = __projection = glm::perspective(
+            __projection = glm::perspective(
                 glm::radians(__fov), // FOV
                 (GLfloat)__wWidth / (GLfloat)__wHeight, // Aspect Ratio
                 __zNear,  // zNear

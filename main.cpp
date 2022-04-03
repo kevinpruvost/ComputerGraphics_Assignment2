@@ -94,6 +94,7 @@ int main()
 	}
 
 	Mesh mesh = GenerateMesh(my_obj);
+	Mesh sphereMesh = GenerateMeshSphere();
 
 	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 3.0f);
 

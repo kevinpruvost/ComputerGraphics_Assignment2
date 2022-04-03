@@ -27,6 +27,9 @@ public:
     GLuint GetFacesVBO();
     GLuint GetVerticesCount();
     GLuint GetFacesVerticesCount();
+
+    virtual GLuint GetFacesEBO() = 0;
+    virtual bool IsUsingEBO() = 0;
 private:
 
 protected:

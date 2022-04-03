@@ -13,6 +13,7 @@
 // Project includes
 #include "Mesh_Base.hpp"
 #include "Mesh_Obj.hpp"
+#include "Mesh_Sphere.hpp"
 #include "OGL_Implementation\DebugInfo\Log.hpp"
 
 /**
@@ -40,10 +41,23 @@ public:
     GLuint verticesNVert() const;
     GLuint facesNVert() const;
 
+    GLuint facesEBO() const;
+    bool isUsingEBO() const;
+
 private:
     const uint16_t __meshId;
 };
 
+
+/**
+ * @brief Generates mesh from sphere parameters
+ * @param radius 
+ * @param sectorCount 
+ * @param stackCount 
+ * @param smooth 
+ * @return mesh
+*/
+Mesh GenerateMeshSphere(float radius = 1.0f, int sectorCount = 36, int stackCount = 18, bool smooth = true);
 /**
  * @brief Generates mesh from obj class, stores it in the mesh database
  * and returns a Mesh class.

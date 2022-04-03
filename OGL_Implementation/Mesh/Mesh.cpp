@@ -22,6 +22,12 @@ GLuint Mesh::facesVBO() const { return meshesDB[__meshId]->GetFacesVBO(); }
 GLuint Mesh::verticesNVert() const { return meshesDB[__meshId]->GetVerticesCount(); }
 GLuint Mesh::facesNVert() const { return meshesDB[__meshId]->GetFacesVerticesCount(); }
 
+Mesh GenerateMeshSphere(float radius, int sectors, int stacks, bool smooth)
+{
+	meshesDB.emplace_back(new Mesh_Sphere(radius, sectors, stacks, smooth));
+	return Mesh(meshesDB.size() - 1);
+}
+
 Mesh GenerateMesh(const Obj & obj)
 {
 	meshesDB.emplace_back(new Mesh_Obj(obj));
