@@ -8,7 +8,7 @@
 #pragma once
 
 // Project includes
-#include "Mesh.hpp"
+#include "Mesh\Mesh.hpp"
 #include "Shader.hpp"
 
 // GLM includes

@@ -27,7 +27,7 @@
 #include "OGL_Implementation\Shader.hpp"
 #include "OGL_Implementation\Obj.hpp"
 #include "OGL_Implementation\Camera.hpp"
-#include "OGL_Implementation\Mesh.hpp"
+#include "OGL_Implementation\Mesh\Mesh.hpp"
 #include "OGL_Implementation\GUI.hpp"
 #include "OGL_Implementation\Entity.hpp"
 #include "OGL_Implementation\OpenGL_Timer.hpp"

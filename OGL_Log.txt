@@ -1,0 +1,8 @@
+
+STARTING LOG SESSION: 2022-04-03 13:08:31---------------------------------------------------------------
+Mesh_Base constructor
+Mesh_Obj constructor
+Mesh_Obj destructor
+Mesh_Base destructor
+
+ENDING LOG SESSION:   2022-04-03 13:08:36---------------------------------------------------------------

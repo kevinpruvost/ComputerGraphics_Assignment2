@@ -11,34 +11,9 @@
 #include <memory>
 
 // Project includes
-#include "Obj.hpp"
-
-/**
- * @brief Contains the real data of the mesh to be
- * stored in a static database.
-*/
-class Mesh_Base
-{
-public:
-    /**
-     * @brief Constructor from .obj class
-     * @param obj 
-    */
-    Mesh_Base(const Obj & obj);
-protected:
-    Mesh_Base();
-public:
-    virtual ~Mesh_Base();
-
-private:
-    void bindFaces(const Obj & obj);
-    void bindVertices(const Obj & obj);
-
-public:
-    GLuint verticesVAO, facesVAO;
-    GLuint verticesVBO, facesVBO;
-    GLuint verticesNVert, facesNVert;
-};
+#include "Mesh_Base.hpp"
+#include "Mesh_Obj.hpp"
+#include "OGL_Implementation\DebugInfo\Log.hpp"
 
 /**
  * @brief Contains Mesh Id and methods related
@@ -51,7 +26,7 @@ class Mesh
 public:
     /**
      * @brief Constructor from Mesh ID.
-     * @param meshId 
+     * @param meshId
     */
     Mesh(const uint16_t meshId);
 

@@ -1,18 +1,21 @@
 /*****************************************************************//**
- * \file   Mesh.cpp
- * \brief  Mesh class source code
+ * \file   Mesh_Obj.cpp
+ * \brief  Mesh_Obj Source code
  * 
  * \author Kevin Pruvost (pruvostkevin0@gmail.com)
- * \date   March, 27 2022
+ * \date   April, 03 2022
  *********************************************************************/
-#include "Mesh.hpp"
+#include "Mesh_Obj.hpp"
 
-std::vector<std::unique_ptr<Mesh_Base>> meshesDB;
+// Project includes
+#include "OGL_Implementation\DebugInfo\Log.hpp"
 
-Mesh_Base::Mesh_Base(const Obj & obj)
+Mesh_Obj::Mesh_Obj(const Obj & obj)
 {
-	glGenVertexArrays(2, &verticesVAO);
-	glGenBuffers(2, &verticesVBO);
+    Log::Print(Log::LogMainFileName, "Mesh_Obj constructor\n");
+
+	glGenVertexArrays(2, &__verticesVAO);
+	glGenBuffers(2, &__verticesVBO);
 
 	// bind VAO and VBO for drawing vertices
 	bindVertices(obj);
@@ -20,24 +23,21 @@ Mesh_Base::Mesh_Base(const Obj & obj)
 	bindFaces(obj);
 }
 
-Mesh_Base::Mesh_Base()
+Mesh_Obj::~Mesh_Obj()
 {
+    Log::Print(Log::LogMainFileName, "Mesh_Obj destructor\n");
+
+	glDeleteVertexArrays(2, &__verticesVAO);
+	glDeleteBuffers(2, &__verticesVBO);
 }
 
-Mesh_Base::~Mesh_Base()
-{
-	// Properly de-allocate all resources once they've outlived their purpose
-	glDeleteVertexArrays(2, &verticesVAO);
-	glDeleteBuffers(2, &verticesVBO);
-}
-
-void Mesh_Base::bindFaces(const Obj & obj)
+void Mesh_Obj::bindFaces(const Obj & obj)
 {
 	// bind VAO
-	glBindVertexArray(facesVAO);
+	glBindVertexArray(__facesVAO);
 
 	// bind VBO, buffer data to it
-	glBindBuffer(GL_ARRAY_BUFFER, facesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, __facesVBO);
 
 	std::vector<GLfloat> data;
 	for (const auto & face : obj.faces)
@@ -68,16 +68,16 @@ void Mesh_Base::bindFaces(const Obj & obj)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	facesNVert = GLsizei(data.size() / 6);
+	__facesNVert = GLsizei(data.size() / 6);
 }
 
-void Mesh_Base::bindVertices(const Obj & obj)
+void Mesh_Obj::bindVertices(const Obj & obj)
 {
 	// bind VAO
-	glBindVertexArray(verticesVAO);
+	glBindVertexArray(__verticesVAO);
 
 	// bind VBO, buffer data to it
-	glBindBuffer(GL_ARRAY_BUFFER, verticesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, __verticesVBO);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * obj.numVertices(), &obj.vertices.front(), GL_STATIC_DRAW);
 
@@ -90,34 +90,5 @@ void Mesh_Base::bindVertices(const Obj & obj)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	verticesNVert = GLsizei(obj.numVertices());
-}
-
-Mesh::Mesh(const uint16_t meshId)
-	: __meshId(meshId)
-{
-}
-
-GLuint Mesh::meshId() const { return __meshId; }
-GLuint Mesh::verticesVAO() const { return meshesDB[__meshId]->verticesVAO; }
-GLuint Mesh::facesVAO() const { return meshesDB[__meshId]->facesVAO; }
-GLuint Mesh::verticesVBO() const { return meshesDB[__meshId]->verticesVBO; }
-GLuint Mesh::facesVBO() const { return meshesDB[__meshId]->facesVBO; }
-GLuint Mesh::verticesNVert() const { return meshesDB[__meshId]->verticesNVert; }
-GLuint Mesh::facesNVert() const { return meshesDB[__meshId]->facesNVert; }
-
-Mesh GenerateMesh(const Obj & obj)
-{
-	meshesDB.emplace_back(new Mesh_Base(obj));
-	return Mesh(meshesDB.size() - 1);
-}
-
-Mesh GenerateMesh(const Mesh & mesh)
-{
-	return Mesh(mesh);
-}
-
-Mesh GenerateMesh(const uint16_t meshId)
-{
-	return Mesh(meshId);
+	__verticesNVert = GLsizei(obj.numVertices());
 }

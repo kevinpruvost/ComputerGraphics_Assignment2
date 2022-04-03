@@ -41,10 +41,12 @@ add_subdirectory("Documentation")
 file (GLOB ASSIGNMENT_SOURCES
     OGL_Implementation/*.cpp
     OGL_Implementation/DebugInfo/*.cpp
+    OGL_Implementation/Mesh/*.cpp
 )
 file (GLOB ASSIGNMENT_HEADERS
     OGL_Implementation/*.hpp
     OGL_Implementation/DebugInfo/*.hpp
+    OGL_Implementation/Mesh/*.hpp
 )
 
 add_executable(Assignment2
