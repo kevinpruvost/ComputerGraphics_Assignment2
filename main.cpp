@@ -77,7 +77,7 @@ int main()
 		return EXIT_FAILURE;
 	}
 
-	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 3.0f);
+	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 10.0f);
 
 	Entity entity(sphereMesh, pointShader, wireframeShader, faceShader);
 	entity.SetTexture(texture);
@@ -93,8 +93,8 @@ int main()
 	gui.AddCallback([&]() {
 		ImGui::SetNextWindowPos(
 			{ImGui::GetIO().DisplaySize.x - 20.0f - 300.0f, 20.0f},
-			ImGuiCond_::ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize({ 300.0f, 150.0f }, ImGuiCond_::ImGuiCond_FirstUseEver);
+			ImGuiCond_::ImGuiCond_Always);
+		ImGui::SetNextWindowSize({ 300.0f, 150.0f }, ImGuiCond_::ImGuiCond_Always);
 		ImGui::Begin("Object Properties:");
 
 		ImGui::Text(std::format("FPS: {}", GetFpsCount(window.deltaTime(), 0.5f)).c_str());
