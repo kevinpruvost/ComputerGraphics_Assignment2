@@ -31,6 +31,16 @@ Mesh_Obj::~Mesh_Obj()
 	glDeleteBuffers(2, &__verticesVBO);
 }
 
+GLuint Mesh_Obj::GetFacesEBO() const
+{
+	return 0;
+}
+
+bool Mesh_Obj::IsUsingEBO() const
+{
+	return false;
+}
+
 void Mesh_Obj::bindFaces(const Obj & obj)
 {
 	// bind VAO

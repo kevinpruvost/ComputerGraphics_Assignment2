@@ -22,6 +22,16 @@ GLuint Mesh::facesVBO() const { return meshesDB[__meshId]->GetFacesVBO(); }
 GLuint Mesh::verticesNVert() const { return meshesDB[__meshId]->GetVerticesCount(); }
 GLuint Mesh::facesNVert() const { return meshesDB[__meshId]->GetFacesVerticesCount(); }
 
+GLuint Mesh::facesEBO() const
+{
+	return meshesDB[__meshId]->GetFacesEBO();
+}
+
+bool Mesh::isUsingEBO() const
+{
+	return meshesDB[__meshId]->IsUsingEBO();
+}
+
 Mesh GenerateMeshSphere(float radius, int sectors, int stacks, bool smooth)
 {
 	meshesDB.emplace_back(new Mesh_Sphere(radius, sectors, stacks, smooth));

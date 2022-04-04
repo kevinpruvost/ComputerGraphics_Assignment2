@@ -32,9 +32,11 @@
 #include "OGL_Implementation\Entity.hpp"
 #include "OGL_Implementation\OpenGL_Timer.hpp"
 #include "OGL_Implementation\DebugInfo\FpsCounter.hpp"
+#include "OGL_Implementation\Texture.hpp"
 
 // buffer binding & drawing functions
 void drawFaces(Shader& shader, GLuint VAO, int num);
+void newDrawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh);
 void drawVertices(Shader& shader, GLuint VAO, int num);
 void drawWireframe(Shader & shader, GLuint VAO, int num);
 
@@ -94,7 +96,14 @@ int main()
 	}
 
 	Mesh mesh = GenerateMesh(my_obj);
-	Mesh sphereMesh = GenerateMeshSphere();
+
+	Mesh sphereMesh = GenerateMeshSphere(1.0f, 36, 18, true);
+	Texture texture;
+	if (!texture.GenerateTexture("resources/earth.jpg"))
+	{
+		Log::Print(stderr, "%s couldn't be loaded!\n", "resources/earth.jpg");
+		return EXIT_FAILURE;
+	}
 
 	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 3.0f);
 
@@ -200,9 +209,20 @@ int main()
 			std::rotate(wireframeColors.begin(), wireframeColors.begin() + 1, wireframeColors.end());
 
 		// display mode & activate shader
-		if (displayMode == 0) drawVertices(pointShader, mesh.verticesVAO(), mesh.verticesNVert());
-		if (displayMode & 1) drawFaces(faceShader, mesh.facesVAO(), mesh.facesNVert());
-		if (displayMode & 2) drawWireframe(wireframeShader, mesh.facesVAO(), mesh.facesNVert());
+		if (displayMode == 0)
+		{
+//			drawVertices(pointShader, mesh.verticesVAO(), mesh.verticesNVert());
+			drawVertices(pointShader, sphereMesh.verticesVAO(), mesh.verticesNVert());
+		}
+		if (displayMode & 1)
+		{
+			//drawFaces(faceShader, mesh.facesVAO(), mesh.facesNVert());
+			newDrawFaces(faceShader, sphereMesh.facesVAO(), sphereMesh.facesNVert(), texture, sphereMesh);
+		}
+		if (displayMode & 2)
+		{
+			drawWireframe(wireframeShader, sphereMesh.facesVAO(), sphereMesh.facesNVert());
+		}
 
 		// Drawing ImGui GUI
 		if (!gui.DrawGUI()) return false;
@@ -211,6 +231,25 @@ int main()
 	});
 
 	return EXIT_SUCCESS;
+}
+
+void newDrawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh)
+{
+	shader.Use();
+
+	//// get uniform locations
+	GLint modelLoc = glGetUniformLocation(shader.program, "model");
+
+	// pass uniform values to shader
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+	glUniform1i(glGetUniformLocation(shader.program, "_texture"), 0);
+
+	glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+	glBindVertexArray(VAO);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDrawElements(GL_TRIANGLES, num, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 }
 
 void drawFaces(Shader& shader, GLuint VAO, int num)
@@ -245,7 +284,7 @@ void drawWireframe(Shader & shader, GLuint VAO, int num)
 
 	glBindVertexArray(VAO);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawArrays(GL_TRIANGLES, 0, num);
+	glDrawElements(GL_TRIANGLES, num, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 

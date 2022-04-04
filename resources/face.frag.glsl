@@ -4,11 +4,13 @@
 
 #version 330 core
 
-in vec3 randColor;
+in vec2 TexCoords;
 
 out vec4 color;
 
+uniform sampler2D _texture;
+
 void main()
 {
-	color = vec4(randColor, 1.0f);
+	color = texture(_texture, TexCoords);
 }

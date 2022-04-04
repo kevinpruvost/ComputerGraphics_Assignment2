@@ -21,6 +21,9 @@ public:
     Mesh_Obj(const Obj & obj);
     ~Mesh_Obj();
 
+    GLuint GetFacesEBO() const override;
+    bool IsUsingEBO() const override;
+
 private:
     void bindFaces(const Obj & obj);
     void bindVertices(const Obj & obj);

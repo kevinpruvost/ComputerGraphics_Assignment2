@@ -34,9 +34,9 @@ bool Texture::GenerateTexture(const std::string & filePath)
         // Load image, create texture and generate mipmaps
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, __width, __height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
         glGenerateMipmap(GL_TEXTURE_2D);
-        SOIL_free_image_data(image);
         // Unbind texture when done, so we won't accidentily mess up our texture.
         glBindTexture(GL_TEXTURE_2D, 0);
+        SOIL_free_image_data(image);
         return true;
     }
     return false;

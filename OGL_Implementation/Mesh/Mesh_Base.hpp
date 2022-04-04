@@ -21,15 +21,15 @@ protected:
 public:
     virtual ~Mesh_Base();
 
-    GLuint GetVerticesVAO();
-    GLuint GetFacesVAO();
-    GLuint GetVerticesVBO();
-    GLuint GetFacesVBO();
-    GLuint GetVerticesCount();
-    GLuint GetFacesVerticesCount();
+    GLuint GetVerticesVAO() const;
+    GLuint GetFacesVAO() const;
+    GLuint GetVerticesVBO() const;
+    GLuint GetFacesVBO() const;
+    GLuint GetVerticesCount() const;
+    GLuint GetFacesVerticesCount() const;
 
-    virtual GLuint GetFacesEBO() = 0;
-    virtual bool IsUsingEBO() = 0;
+    virtual GLuint GetFacesEBO() const = 0;
+    virtual bool IsUsingEBO() const = 0;
 private:
 
 protected:

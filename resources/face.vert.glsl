@@ -5,8 +5,9 @@
 #version 330 core
 
 // input vertex attributes
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 aColor;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
 
 uniform mat4 model;
 layout (std140) uniform ViewProj
@@ -14,12 +15,10 @@ layout (std140) uniform ViewProj
 	mat4 viewProj;
 };
 
-out vec3 ourColor;
-out vec3 randColor;
-
+out vec2 TexCoords;
 
 void main()
 {
-	gl_Position = viewProj * model * vec4(position, 1.0f);
-	randColor = aColor;
+	gl_Position = viewProj * model * vec4(aPos, 1.0f);
+	TexCoords = aTexCoords;
 }

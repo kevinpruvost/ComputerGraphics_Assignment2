@@ -10,6 +10,9 @@
 // C++ includes
 #include <cmath>
 
+// GLM includes
+#include <glm\glm.hpp>
+
 const double Pi = acos(-1.0f);
 
 /**
@@ -74,9 +77,23 @@ struct VertexNormalTexture
 	VertexNormalTexture(GLfloat x_ = 0.0f, GLfloat y_ = 0.0f, GLfloat z_ = 0.0f,
 		GLfloat nx_ = 0.0f, GLfloat ny_ = 0.0f, GLfloat nz_ = 0.0f,
 		GLfloat s_ = 0.0f, GLfloat t_ = 0.0f)
-		: x(x_), y(y_), z(z_)
-		, nx(nx_), ny(ny_), nz(nz_)
-		, s(s_), t(t_)
+		: xyz(x_, y_, z_)
+		, normals(nx_, ny_, nz_)
+		, textureCoords(s_, t_)
 	{}
-	GLfloat x, y, z, nx, ny, nz, s, t;
+	union
+	{
+		struct { GLfloat x, y, z; };
+		glm::fvec3 xyz;
+	};
+	union
+	{
+		struct { GLfloat nx, ny, nz; };
+		glm::fvec3 normals;
+	};
+	union
+	{
+		struct { GLfloat s, t; };
+		glm::fvec2 textureCoords;
+	};
 };
