@@ -34,22 +34,19 @@
 #include "OGL_Implementation\DebugInfo\FpsCounter.hpp"
 #include "OGL_Implementation\Texture.hpp"
 
+// Constants
+#include "Constants.hpp"
+
 // buffer binding & drawing functions
-void drawFaces(Shader& shader, GLuint VAO, int num);
-void newDrawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh);
+void drawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh);
 void drawVertices(Shader& shader, GLuint VAO, int num);
 void drawWireframe(Shader & shader, GLuint VAO, int num);
 
-// Camera
-bool firstMouse = true;
-
 // hyper-parameters
-glm::vec3 translation = glm::vec3(0.0f, 0.0f, -2.0f);
-glm::vec3 rotationAxis = glm::vec3(-1.0f, 1.0f, -1.0f);
-glm::vec3 color = glm::vec3(0.1f, 0.95f, 0.1f); 
-glm::vec3 color1 = glm::vec3(1.0f, 0.95f, 0.1f);
-glm::vec3 color2 = glm::vec3(0.1f, 0.95f, 1.0f);
-glm::vec3 color3 = glm::vec3(0.5f, 0.2f, 0.3f);
+constexpr const glm::vec3 color = glm::vec3(0.1f, 0.95f, 0.1f);
+constexpr const glm::vec3 color1 = glm::vec3(1.0f, 0.95f, 0.1f);
+constexpr const glm::vec3 color2 = glm::vec3(0.1f, 0.95f, 1.0f);
+constexpr const glm::vec3 color3 = glm::vec3(0.5f, 0.2f, 0.3f);
 std::array<glm::vec3, 4> wireframeColors = { color, color1, color2, color3 };
 GLfloat rotationDegrees = 0.0f;
 GLuint displayMode = 0;
@@ -68,40 +65,36 @@ glm::mat4 view(1);
 glm::mat4 projection(1);
 GLuint viewProj;
 
-// object file path
-const char* const OBJ_FILE = "resources/eight.uniform.obj";
-
 // The MAIN function, from here we start the application and run the game loop
 int main()
 {
 	Window window;
-	if (!window.Init("Assignment 2: Pruvost Kevin 2021400603", "resources/tsinghua_icon.png"))
+	if (!window.Init(Constants::Window::windowName, Constants::Paths::windowIcon))
 		return EXIT_FAILURE;
 
 	// Build and compile our shader program
-	Shader pointShader("resources/point.vert.glsl", "resources/point.frag.glsl");
-	Shader faceShader("resources/face.vert.glsl", "resources/face.frag.glsl");
-	Shader wireframeShader("resources/wireframe.vert.glsl", "resources/wireframe.frag.glsl");
+	Shader pointShader(Constants::Paths::pointShaderVertex, Constants::Paths::pointShaderFrag);
+	Shader faceShader(Constants::Paths::faceShaderVertex, Constants::Paths::faceShaderFrag);
+	Shader wireframeShader(Constants::Paths::wireframeShaderVertex, Constants::Paths::wireframeShaderFrag);
 
 	pointShader.AddGlobalUbo(0, "ViewProj");
 	faceShader.AddGlobalUbo(0, "ViewProj");
 	wireframeShader.AddGlobalUbo(0, "ViewProj");
 
-	// load model
-	Obj my_obj;
-	if (!my_obj.TryLoad(OBJ_FILE))
-	{
-		std::cerr << "Couldn't load " << OBJ_FILE << std::endl;
-		return EXIT_FAILURE;
-	}
+	// Load model
+	// Obj my_obj;
+	// if (!my_obj.TryLoad(Constants::Paths::Models::Rat::objFile))
+	// {
+	// 	std::cerr << "Couldn't load " << Constants::Paths::Models::Rat::objFile << std::endl;
+	// 	return EXIT_FAILURE;
+	// } 
+	// Mesh mesh = GenerateMesh(my_obj);
 
-	Mesh mesh = GenerateMesh(my_obj);
-
-	Mesh sphereMesh = GenerateMeshSphere(1.0f, 36, 18, true);
+	Mesh sphereMesh = GenerateMeshSphere(1.0f, 36, 18, false);
 	Texture texture;
-	if (!texture.GenerateTexture("resources/earth.jpg"))
+	if (!texture.GenerateTexture(Constants::Paths::earth))
 	{
-		Log::Print(stderr, "%s couldn't be loaded!\n", "resources/earth.jpg");
+		Log::Print(stderr, "%s couldn't be loaded!\n", Constants::Paths::earth);
 		return EXIT_FAILURE;
 	}
 
@@ -113,7 +106,7 @@ int main()
 		glm::radians(50.0f), GLM_UP),
 		glm::radians(70.0f), GLM_RIGHT);
 
-	Entity entity(mesh);
+	Entity entity(sphereMesh);
 	entity.eulerAngles.y = 50.0f;
 	entity.eulerAngles.x = 70.0f;
 
@@ -209,20 +202,9 @@ int main()
 			std::rotate(wireframeColors.begin(), wireframeColors.begin() + 1, wireframeColors.end());
 
 		// display mode & activate shader
-		if (displayMode == 0)
-		{
-//			drawVertices(pointShader, mesh.verticesVAO(), mesh.verticesNVert());
-			drawVertices(pointShader, sphereMesh.verticesVAO(), mesh.verticesNVert());
-		}
-		if (displayMode & 1)
-		{
-			//drawFaces(faceShader, mesh.facesVAO(), mesh.facesNVert());
-			newDrawFaces(faceShader, sphereMesh.facesVAO(), sphereMesh.facesNVert(), texture, sphereMesh);
-		}
-		if (displayMode & 2)
-		{
-			drawWireframe(wireframeShader, sphereMesh.facesVAO(), sphereMesh.facesNVert());
-		}
+		if (displayMode == 0) drawVertices(pointShader, sphereMesh.verticesVAO(), sphereMesh.verticesNVert());
+		if (displayMode & 1)  drawFaces(faceShader, sphereMesh.facesVAO(), sphereMesh.facesNVert(), texture, sphereMesh);
+		if (displayMode & 2)  drawWireframe(wireframeShader, sphereMesh.facesVAO(), sphereMesh.facesNVert());
 
 		// Drawing ImGui GUI
 		if (!gui.DrawGUI()) return false;
@@ -233,7 +215,7 @@ int main()
 	return EXIT_SUCCESS;
 }
 
-void newDrawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh)
+void drawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh)
 {
 	shader.Use();
 
@@ -249,22 +231,6 @@ void newDrawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture,
 	glBindVertexArray(VAO);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDrawElements(GL_TRIANGLES, num, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-
-void drawFaces(Shader& shader, GLuint VAO, int num)
-{
-	shader.Use();
-
-	//// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.program, "model");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	glBindVertexArray(VAO);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawArrays(GL_TRIANGLES, 0, num);
 	glBindVertexArray(0);
 }
 
@@ -292,10 +258,10 @@ void drawVertices(Shader& shader, GLuint VAO, int num)
 {
 	shader.Use();
 
-	//// get uniform locations
+	// get uniform locations
 	GLint modelLoc = glGetUniformLocation(shader.program, "model");
 
-	//// pass uniform values to shader
+	// pass uniform values to shader
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 	// use the same color for all points

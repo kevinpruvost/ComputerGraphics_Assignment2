@@ -39,18 +39,19 @@ add_subdirectory("Documentation")
 
 # Assignment2 Executable
 file (GLOB ASSIGNMENT_SOURCES
+    *.cpp
     OGL_Implementation/*.cpp
     OGL_Implementation/DebugInfo/*.cpp
     OGL_Implementation/Mesh/*.cpp
 )
 file (GLOB ASSIGNMENT_HEADERS
+    *.hpp
     OGL_Implementation/*.hpp
     OGL_Implementation/DebugInfo/*.hpp
     OGL_Implementation/Mesh/*.hpp
 )
 
 add_executable(Assignment2
-    "main.cpp"
     ${ASSIGNMENT_SOURCES}
     ${ASSIGNMENT_HEADERS}
 )

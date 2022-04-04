@@ -181,8 +181,6 @@ void Mesh_Sphere::buildVerticesSmooth()
         }
     }
 
-    LOG_PRINT(stdout, "Indices count: %d\n", indices.size());
-
     bindVnts(vnts, indices);
 }
 
@@ -197,8 +195,8 @@ void Mesh_Sphere::buildVerticesFlat()
     const size_t count = static_cast<size_t>(__sectors) * (5 + (static_cast<size_t>(__stacks) - 2) * 10 + 7);
     indices.reserve(count);
 
-    GLuint v1, v2, v3, v4;             // 4 vertex positions and tex coords
-    std::vector<float> n;                           // 1 face normal
+    GLuint v1, v2, v3, v4;   // 4 vertex positions and tex coords
+    std::vector<float> n;    // 1 face normal
 
     int i, j, k;
     int index = 0;                                  // index for vertex
@@ -331,8 +329,6 @@ void Mesh_Sphere::buildVerticesFlat()
             }
         }
     }
-
-    LOG_PRINT(stdout, "Indices count: %d\n", indices.size());
 
     bindVnts(vnts, indices);
 }
