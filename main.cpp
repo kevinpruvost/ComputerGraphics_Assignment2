@@ -24,46 +24,25 @@
 
 // Project includes
 #include "OGL_Implementation\Window.hpp"
-#include "OGL_Implementation\Shader.hpp"
+#include "OGL_Implementation\Shader\Shader.hpp"
 #include "OGL_Implementation\Obj.hpp"
 #include "OGL_Implementation\Camera.hpp"
 #include "OGL_Implementation\Mesh\Mesh.hpp"
 #include "OGL_Implementation\GUI.hpp"
-#include "OGL_Implementation\Entity.hpp"
+#include "OGL_Implementation\Entity\Entity.hpp"
 #include "OGL_Implementation\OpenGL_Timer.hpp"
 #include "OGL_Implementation\DebugInfo\FpsCounter.hpp"
 #include "OGL_Implementation\Texture.hpp"
+#include "OGL_Implementation\Rendering\Rendering.hpp"
 
 // Constants
 #include "Constants.hpp"
 
-// buffer binding & drawing functions
-void drawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh);
-void drawVertices(Shader& shader, GLuint VAO, int num);
-void drawWireframe(Shader & shader, GLuint VAO, int num);
-
-// hyper-parameters
-constexpr const glm::vec3 color = glm::vec3(0.1f, 0.95f, 0.1f);
-constexpr const glm::vec3 color1 = glm::vec3(1.0f, 0.95f, 0.1f);
-constexpr const glm::vec3 color2 = glm::vec3(0.1f, 0.95f, 1.0f);
-constexpr const glm::vec3 color3 = glm::vec3(0.5f, 0.2f, 0.3f);
-std::array<glm::vec3, 4> wireframeColors = { color, color1, color2, color3 };
-GLfloat rotationDegrees = 0.0f;
+// Display Mode
 GLuint displayMode = 0;
-
-constexpr float ROTATE_SPEED = glm::radians(5.0f);
-constexpr float TRANSLATE_SPEED = 0.15f;
-
-constexpr const glm::vec3 GLM_UP(0.0f, 1.0f, 0.0f);
-constexpr const glm::vec3 GLM_RIGHT(0.0f, 0.0f, 1.0f);
-constexpr const glm::vec3 GLM_DOWN = -GLM_UP;
-constexpr const glm::vec3 GLM_LEFT = -GLM_RIGHT;
 
 // pointers to model / view / projection matrices
 glm::mat4 model(1);
-glm::mat4 view(1);
-glm::mat4 projection(1);
-GLuint viewProj;
 
 // The MAIN function, from here we start the application and run the game loop
 int main()
@@ -73,9 +52,9 @@ int main()
 		return EXIT_FAILURE;
 
 	// Build and compile our shader program
-	Shader pointShader(Constants::Paths::pointShaderVertex, Constants::Paths::pointShaderFrag);
-	Shader faceShader(Constants::Paths::faceShaderVertex, Constants::Paths::faceShaderFrag);
-	Shader wireframeShader(Constants::Paths::wireframeShaderVertex, Constants::Paths::wireframeShaderFrag);
+	Shader pointShader = GenerateShader(Constants::Paths::pointShaderVertex, Constants::Paths::pointShaderFrag);
+	Shader faceShader = GenerateShader(Constants::Paths::faceShaderVertex, Constants::Paths::faceShaderFrag);
+	Shader wireframeShader = GenerateShader(Constants::Paths::wireframeShaderVertex, Constants::Paths::wireframeShaderFrag);
 
 	pointShader.AddGlobalUbo(0, "ViewProj");
 	faceShader.AddGlobalUbo(0, "ViewProj");
@@ -100,13 +79,8 @@ int main()
 
 	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 3.0f);
 
-	// Create transformations
-	model = glm::rotate(
-		glm::rotate(glm::mat4(1.0f),
-		glm::radians(50.0f), GLM_UP),
-		glm::radians(70.0f), GLM_RIGHT);
-
-	Entity entity(sphereMesh);
+	Entity entity(sphereMesh, pointShader, wireframeShader, faceShader);
+	entity.SetTexture(texture);
 	entity.eulerAngles.y = 50.0f;
 	entity.eulerAngles.x = 70.0f;
 
@@ -147,7 +121,7 @@ int main()
 
 		if (autoRotation)
 			entity.eulerAngles.y = fmod(entity.eulerAngles.y + window.deltaTime() * 10.0f, 360.0f);
-		model = entity.getModelMatrix();
+		model = entity.GetModelMatrix();
 
 		// Model movement
 		if (window.key(GLFW_KEY_UP) == InputKey::Pressed)
@@ -199,12 +173,12 @@ int main()
 
 		// Wireframe Color change
 		if (window.key(GLFW_KEY_P) == InputKey::JustPressed)
-			std::rotate(wireframeColors.begin(), wireframeColors.begin() + 1, wireframeColors.end());
+			Rendering::RotateWireframeColor();
 
 		// display mode & activate shader
-		if (displayMode == 0) drawVertices(pointShader, sphereMesh.verticesVAO(), sphereMesh.verticesNVert());
-		if (displayMode & 1)  drawFaces(faceShader, sphereMesh.facesVAO(), sphereMesh.facesNVert(), texture, sphereMesh);
-		if (displayMode & 2)  drawWireframe(wireframeShader, sphereMesh.facesVAO(), sphereMesh.facesNVert());
+		if (displayMode == 0) Rendering::DrawVertices(entity);
+		if (displayMode & 1)  Rendering::DrawFaces(entity);
+		if (displayMode & 2)  Rendering::DrawWireframe(entity);
 
 		// Drawing ImGui GUI
 		if (!gui.DrawGUI()) return false;
@@ -213,62 +187,4 @@ int main()
 	});
 
 	return EXIT_SUCCESS;
-}
-
-void drawFaces(Shader & shader, GLuint VAO, int num, const Texture & texture, const Mesh & mesh)
-{
-	shader.Use();
-
-	//// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.program, "model");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	glUniform1i(glGetUniformLocation(shader.program, "_texture"), 0);
-
-	glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
-	glBindVertexArray(VAO);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawElements(GL_TRIANGLES, num, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-
-void drawWireframe(Shader & shader, GLuint VAO, int num)
-{
-	shader.Use();
-
-	// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.program, "model");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	// use the same color for all points
-	GLint colorLoc = glGetUniformLocation(shader.program, "ourColor");
-	glUniform3fv(colorLoc, 1, glm::value_ptr(wireframeColors[0]));
-
-	glBindVertexArray(VAO);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawElements(GL_TRIANGLES, num, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-
-void drawVertices(Shader& shader, GLuint VAO, int num)
-{
-	shader.Use();
-
-	// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.program, "model");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-	// use the same color for all points
-	GLint colorLoc = glGetUniformLocation(shader.program, "ourColor");
-	glUniform3fv(colorLoc, 1, glm::value_ptr(color));
-
-	glBindVertexArray(VAO);
-	glDrawArrays(GL_POINTS, 0, num);
-	glBindVertexArray(0);
 }

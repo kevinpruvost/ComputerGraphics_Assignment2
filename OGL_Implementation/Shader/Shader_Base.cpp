@@ -1,13 +1,16 @@
 /*****************************************************************//**
- * \file   Shader.cpp
+ * \file   Shader_Base.cpp
  * \brief  Source code of Shader class
  * 
  * \author Kevin Pruvost (pruvostkevin0@gmail.com)
  * \date   March, 27 2022
  *********************************************************************/
-#include "Shader.hpp"
+#include "Shader_Base.hpp"
 
-Shader::Shader(const GLchar * vertexPath, const GLchar * fragmentPath)
+// Project includes
+#include "OGL_Implementation\DebugInfo\Log.hpp"
+
+Shader_Base::Shader_Base(const GLchar * vertexPath, const GLchar * fragmentPath)
 {
 	// 1. Retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;
@@ -65,15 +68,15 @@ Shader::Shader(const GLchar * vertexPath, const GLchar * fragmentPath)
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 	// Shader Program
-	program = glCreateProgram();
-	glAttachShader(program, vertex);
-	glAttachShader(program, fragment);
-	glLinkProgram(program);
+	__program = glCreateProgram();
+	glAttachShader(__program, vertex);
+	glAttachShader(__program, fragment);
+	glLinkProgram(__program);
 	// Print linking errors if any
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	glGetProgramiv(__program, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		glGetProgramInfoLog(__program, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 	// Delete the shaders as they're linked into our program now and no longer necessery
@@ -82,13 +85,23 @@ Shader::Shader(const GLchar * vertexPath, const GLchar * fragmentPath)
 
 }
 
-void Shader::Use()
+Shader_Base::~Shader_Base()
 {
-	glUseProgram(program);
+	glDeleteProgram(__program);
 }
 
-void Shader::AddGlobalUbo(GLuint bindingPoint, const char * bindingPointName)
+GLuint Shader_Base::Program() const
 {
-	GLuint id = glGetUniformBlockIndex(program, bindingPointName);
-	glUniformBlockBinding(program, id, bindingPoint);
+	return __program;
+}
+
+void Shader_Base::Use() const
+{
+	glUseProgram(__program);
+}
+
+void Shader_Base::AddGlobalUbo(const GLuint bindingPoint, const char * bindingPointName) const
+{
+	GLuint id = glGetUniformBlockIndex(__program, bindingPointName);
+	glUniformBlockBinding(__program, id, bindingPoint);
 }

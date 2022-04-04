@@ -9,7 +9,7 @@
 
 static std::vector<std::unique_ptr<Mesh_Base>> meshesDB;
 
-Mesh::Mesh(const uint16_t meshId)
+Mesh::Mesh(const GLuint meshId)
 	: __meshId(meshId)
 {
 }

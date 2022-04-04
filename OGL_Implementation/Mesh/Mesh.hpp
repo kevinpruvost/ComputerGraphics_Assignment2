@@ -19,8 +19,10 @@
 /**
  * @brief Contains Mesh Id and methods related
  * to the mesh database.
- * It also helps having a much lighter class because Mesh_Base weighs 24 bytes
+ * It also helps having a much lighter class because Mesh_Base weighs 30 bytes
  * and Mesh only 2 bytes.
+ * And most importantly, the usage is way easier, because copies, constructors, destructors,
+ * will not affect the original mesh
 */
 class Mesh
 {
@@ -29,7 +31,7 @@ public:
      * @brief Constructor from Mesh ID.
      * @param meshId
     */
-    Mesh(const uint16_t meshId);
+    Mesh(const GLuint meshId);
 
 public:
     GLuint meshId() const;
@@ -45,7 +47,7 @@ public:
     bool isUsingEBO() const;
 
 private:
-    const uint16_t __meshId;
+    const GLuint __meshId;
 };
 
 

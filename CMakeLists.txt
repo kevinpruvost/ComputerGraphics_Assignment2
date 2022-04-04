@@ -43,12 +43,18 @@ file (GLOB ASSIGNMENT_SOURCES
     OGL_Implementation/*.cpp
     OGL_Implementation/DebugInfo/*.cpp
     OGL_Implementation/Mesh/*.cpp
+    OGL_Implementation/Shader/*.cpp
+    OGL_Implementation/Entity/*.cpp
+    OGL_Implementation/Rendering/*.cpp
 )
 file (GLOB ASSIGNMENT_HEADERS
     *.hpp
     OGL_Implementation/*.hpp
     OGL_Implementation/DebugInfo/*.hpp
     OGL_Implementation/Mesh/*.hpp
+    OGL_Implementation/Shader/*.hpp
+    OGL_Implementation/Entity/*.hpp
+    OGL_Implementation/Rendering/*.hpp
 )
 
 add_executable(Assignment2
