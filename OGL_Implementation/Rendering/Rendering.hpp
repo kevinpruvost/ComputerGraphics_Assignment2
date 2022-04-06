@@ -10,6 +10,9 @@
 // Project includes
 #include "OGL_Implementation\Entity\Entity.hpp"
 
+/**
+ * @brief Static class containing rendering utilities
+*/
 class Rendering
 {
 public:

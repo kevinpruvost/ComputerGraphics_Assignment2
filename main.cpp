@@ -34,12 +34,13 @@
 #include "OGL_Implementation\DebugInfo\FpsCounter.hpp"
 #include "OGL_Implementation\Texture.hpp"
 #include "OGL_Implementation\Rendering\Rendering.hpp"
+#include "OGL_Implementation\Text\Font.hpp"
 
 // Constants
 #include "Constants.hpp"
 
 // Display Mode
-GLuint displayMode = 0;
+GLuint displayMode = 1; // 0 = Point, 1 = Face, 2 = Wireframe, 3 = Face + Wireframe
 
 // pointers to model / view / projection matrices
 glm::mat4 model(1);
@@ -50,6 +51,8 @@ int main()
 	Window window;
 	if (!window.Init(Constants::Window::windowName, Constants::Paths::windowIcon))
 		return EXIT_FAILURE;
+
+	Font font = GenerateFont(Constants::Paths::arialFont);
 
 	// Build and compile our shader program
 	Shader pointShader = GenerateShader(Constants::Paths::pointShaderVertex, Constants::Paths::pointShaderFrag);

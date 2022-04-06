@@ -46,6 +46,7 @@ file (GLOB ASSIGNMENT_SOURCES
     OGL_Implementation/Shader/*.cpp
     OGL_Implementation/Entity/*.cpp
     OGL_Implementation/Rendering/*.cpp
+    OGL_Implementation/Text/*.cpp
 )
 file (GLOB ASSIGNMENT_HEADERS
     *.hpp
@@ -55,6 +56,7 @@ file (GLOB ASSIGNMENT_HEADERS
     OGL_Implementation/Shader/*.hpp
     OGL_Implementation/Entity/*.hpp
     OGL_Implementation/Rendering/*.hpp
+    OGL_Implementation/Text/*.hpp
 )
 
 add_executable(Assignment2
@@ -63,7 +65,7 @@ add_executable(Assignment2
 )
 
 # Linking libraries to Assignment2
-target_link_libraries(Assignment2 opengl32 glad glfw glm ImGui SOIL
+target_link_libraries(Assignment2 opengl32 glad glfw glm ImGui SOIL freetype
 )
 
 # Including root directory & libraries directories

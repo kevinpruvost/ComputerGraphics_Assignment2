@@ -36,6 +36,8 @@ constexpr const char * venus   = "resources/venus.jpg";
 constexpr const char * saturn  = "resources/saturn.jpg";
 constexpr const char * jupiter = "resources/jupiter.jpg";
 constexpr const char * mars    = "resources/mars.jpg";
+// Fonts
+constexpr const char * arialFont = "resources/arial.ttf";
 namespace Models
 {
 namespace Rat
