@@ -50,7 +50,7 @@ private:
 class Font_Base
 {
 public:
-    Font_Base(const char * fontPath);
+    Font_Base(const char * fontPath, const FT_UInt fontSize = 260);
     ~Font_Base();
 
     /**
@@ -65,7 +65,14 @@ public:
     */
     const std::unordered_map<GLchar, std::unique_ptr<Character>> & GetCharacters() const;
 
+    /**
+     * @brief Gets Font size
+     * @return font size
+    */
+    FT_UInt GetFontSize() const;
+
 private:
     FT_Face __face;
+    FT_UInt __fontSize;
     std::unordered_map<GLchar, std::unique_ptr<Character>> __characters;
 };

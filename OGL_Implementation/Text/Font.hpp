@@ -32,6 +32,12 @@ public:
     */
     GLuint GetFontDatabaseID() const;
 
+    /**
+     * @brief Gets Font size
+     * @return font size
+    */
+    FT_UInt GetFontSize() const;
+
 public:
     GLuint __fontId;
 };

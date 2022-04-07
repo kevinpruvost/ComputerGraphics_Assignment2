@@ -8,7 +8,11 @@
 #pragma once
 
 // GLM includes
-#include <GLM\glm.hpp>
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
+#include <glm\gtx\euler_angles.hpp>
+#include <glm\gtx\quaternion.hpp>
 
 // Project includes
 #include "Font.hpp"
@@ -17,10 +21,29 @@
 // C++ includes
 #include <string>
 
+/**
+ * @brief 2D Text class
+*/
 class Text2D
 {
 public:
+    /**
+     * @brief Default constructor
+     * @param Font
+     * @param Shader
+     * @param String to display
+     * @param Position (x, y) 
+     * @param Scale
+     * @param Color (float, float, float)
+    */
     Text2D(const Font & _font, const Shader & _shader, const std::string & _str, const glm::vec2 & xy, const GLfloat _scale, const glm::vec3 & _color);
+    /**
+     * @brief Shortened constructor (you need to set the default font & shader manually)
+     * @param String to display
+     * @param Position (x, y)
+     * @param Scale
+     * @param Color (float, float, float)
+    */
     Text2D(const std::string & _str, const glm::vec2 & xy, const GLfloat _scale, const glm::vec3 & _color);
 
 public:
@@ -28,6 +51,46 @@ public:
     Shader shader;
     std::string str;
     glm::vec2 pos;
+    GLfloat scale;
+    glm::vec3 color;
+};
+
+/**
+ * @brief 3D Text class
+*/
+class Text3D
+{
+public:
+    /**
+     * @brief Default constructor
+     * @param Font
+     * @param Shader
+     * @param String to display
+     * @param Position (x, y, z)
+     * @param Scale
+     * @param Color (float, float, float)
+    */
+    Text3D(const Font & _font, const Shader & _shader, const std::string & _str, const glm::vec3 & xyz, const GLfloat _scale, const glm::vec3 & _color);
+    /**
+     * @brief Shortened constructor (you need to set the default font & shader manually)
+     * @param String to display
+     * @param Position (x, y, z)
+     * @param Scale
+     * @param Color (float, float, float)
+    */
+    Text3D(const std::string & _str, const glm::vec3 & xyz, const GLfloat _scale, const glm::vec3 & _color);
+
+    /**
+     * @brief Calculates Model Matrix.
+     * @return Model Matrix
+    */
+    glm::mat4 GetModelMatrix() const;
+
+public:
+    Font font;
+    Shader shader;
+    std::string str;
+    glm::vec3 pos;
     GLfloat scale;
     glm::vec3 color;
 };

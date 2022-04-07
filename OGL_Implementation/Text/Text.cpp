@@ -30,7 +30,7 @@ try : Text2D(*defaultFont, *defaultText2DShader, _str, xy, _scale, _color)
 }
 catch (const std::exception & e)
 {
-    LOG_PRINT(stderr, "Cannot load Text2D because there's no defaultFont or defaultText2DShader.\n");
+    LOG_PRINT(stderr, "Cannot load Text2D because there's no defaultFont or defaultText2DShader: %s\n", e.what());
     throw std::runtime_error("Text2D Default Font/Shader");
 }
 
@@ -47,4 +47,39 @@ void SetDefault2DTextShader(const Shader & shader)
 void SetDefault3DTextShader(const Shader & shader)
 {
     defaultText3DShader.reset(new Shader(shader.GetShaderDatabaseID()));
+}
+
+Text3D::Text3D(const Font & _font, const Shader & _shader, const std::string & _str, const glm::vec3 & xyz, const GLfloat _scale, const glm::vec3 & _color)
+    : str{ _str }
+    , pos{ xyz }
+    , scale{ _scale }
+    , color{ _color }
+    , font{ _font }
+    , shader{ _shader }
+{
+}
+
+Text3D::Text3D(const std::string & _str, const glm::vec3 & xyz, const GLfloat _scale, const glm::vec3 & _color)
+try : Text3D(*defaultFont, *defaultText3DShader, _str, xyz, _scale, _color)
+{
+} catch (const std::exception & e)
+{
+    LOG_PRINT(stderr, "Cannot load Text3D because there's no defaultFont or defaultText3DShader: %s\n", e.what());
+    throw std::runtime_error("Text3D Default Font/Shader");
+}
+
+glm::mat4 Text3D::GetModelMatrix() const
+{
+    // Transformation Matrix
+    glm::mat4 mat = {
+        {1.0f, 0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f, 0.0f},
+        {pos.x, pos.y, pos.z, 1.0f}
+    };
+    // Rotation Matrix
+    //mat *= glm::toMat4(glm::quat(glm::radians(eulerAngles)));
+    // Scaling Matrix
+    mat = glm::scale(mat, glm::vec3(1.0f));
+    return mat;
 }

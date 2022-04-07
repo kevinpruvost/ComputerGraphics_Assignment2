@@ -11,11 +11,12 @@ layout (std140) uniform ViewProj
 {
 	mat4 viewProj;
 };
+uniform mat4 model;
 
 out vec2 TexCoords;
 
 void main()
 {
-	gl_Position = viewProj * vec4(vertex.xy, 0.0f, 1.0f);
+	gl_Position = viewProj * model * vec4(vertex.xy, 0.0f, 1.0f);
 	TexCoords = vec2(vertex.z, 1.0f - vertex.w);
 }

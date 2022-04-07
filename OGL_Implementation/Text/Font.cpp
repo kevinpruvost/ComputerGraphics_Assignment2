@@ -27,6 +27,11 @@ GLuint Font::GetFontDatabaseID() const
     return __fontId;
 }
 
+FT_UInt Font::GetFontSize() const
+{
+    return fontDB[__fontId]->GetFontSize();
+}
+
 Font GenerateFont(const char * fontPath)
 {
     fontDB.emplace_back(new Font_Base(fontPath));

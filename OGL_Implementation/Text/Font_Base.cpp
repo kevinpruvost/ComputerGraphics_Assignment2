@@ -61,8 +61,9 @@ const glm::ivec2 & Character::GetSize() const { return __size; }
 const glm::ivec2 & Character::GetBearing() const { return __bearing; }
 GLuint Character::GetAdvance() const { return __advance; }
 
-Font_Base::Font_Base(const char * fontPath)
+Font_Base::Font_Base(const char * fontPath, const FT_UInt fontSize)
     : __face{ nullptr }
+    , __fontSize{ fontSize }
 {
     if (!InitFreeType()) throw std::exception("FreeType not initialized.");
 
@@ -71,7 +72,7 @@ Font_Base::Font_Base(const char * fontPath)
         LOG_PRINT(stderr, "FreeType couldn't load '%s'.\n", fontPath);
         throw std::exception("Couldn't load font.");
     }
-    if (FT_Set_Pixel_Sizes(__face, 0, 48))
+    if (FT_Set_Pixel_Sizes(__face, 0, fontSize))
     {
         LOG_PRINT(stderr, "FreeType couldn't change font size: '%s'.\n", fontPath);
         throw std::exception("Couldn't change font size.");
@@ -117,6 +118,11 @@ bool Font_Base::InitFreeType()
     }
     FreeTypeInitialized = true;
     return true;
+}
+
+FT_UInt Font_Base::GetFontSize() const
+{
+    return __fontSize;
 }
 
 const std::unordered_map<GLchar, std::unique_ptr<Character>> & Font_Base::GetCharacters() const

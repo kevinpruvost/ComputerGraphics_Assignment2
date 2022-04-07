@@ -56,11 +56,7 @@ void Rendering::DrawFaces(const Entity & entity)
 
 	shader.Use();
 
-	// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.Program(), "model");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(shader.Program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	glUniform1i(glGetUniformLocation(shader.Program(), "_texture"), 0);
 
@@ -121,7 +117,7 @@ void Rendering::RotateWireframeColor()
 	std::rotate(wireframeColors.begin(), wireframeColors.begin() + 1, wireframeColors.end());
 }
 
-void Rendering::Draw2DText(const Text2D & text)
+void Rendering::DrawText(const Text2D & text)
 {
 	text.shader.Use();
 	text.shader.SetUniformFloat("textColor", text.color);
@@ -132,15 +128,16 @@ void Rendering::Draw2DText(const Text2D & text)
 	// Iterate through all characters
 	const auto & characters = text.font.GetCharacters();
 	GLfloat x = text.pos.x, y = text.pos.y;
+	GLfloat scale = text.scale / text.font.GetFontSize();
 	for (const auto & c : text.str)
 	{
 		const Character & ch = *characters.at(c);
 
-		GLfloat xpos = x + ch.GetBearing().x * text.scale;
-		GLfloat ypos = y - (ch.GetSize().y - ch.GetBearing().y) * text.scale;
+		GLfloat xpos = x + ch.GetBearing().x * scale;
+		GLfloat ypos = y - (ch.GetSize().y - ch.GetBearing().y) * scale;
 
-		GLfloat w = ch.GetSize().x * text.scale;
-		GLfloat h = ch.GetSize().y * text.scale;
+		GLfloat w = ch.GetSize().x * scale;
+		GLfloat h = ch.GetSize().y * scale;
 		// Update VBO for each character
 		GLfloat vertices[4][4] = {
 			{ xpos,     ypos,       0.0, 0.0 },
@@ -158,7 +155,53 @@ void Rendering::Draw2DText(const Text2D & text)
 		// Render quad
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); // GL_TRIANGLE_STRIP vs. GL_TRIANGLES, STRIP has more performance
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.GetAdvance() >> 6) * text.scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+		x += (ch.GetAdvance() >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+	}
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Rendering::DrawText(const Text3D & text)
+{
+	text.shader.Use();
+	text.shader.SetUniformFloat("textColor", text.color);
+
+	glUniformMatrix4fv(glGetUniformLocation(text.shader.Program(), "model"), 1, GL_FALSE, glm::value_ptr(text.GetModelMatrix()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(s_Rendering->GetTextVAO());
+
+	// Iterate through all characters
+	const auto & characters = text.font.GetCharacters();
+	GLfloat x = 0.0f, y = 0.0f;
+	GLfloat scale = text.scale / text.font.GetFontSize();
+	for (const auto & c : text.str)
+	{
+		const Character & ch = *characters.at(c);
+
+		GLfloat xpos = x + ch.GetBearing().x * scale;
+		GLfloat ypos = y - (ch.GetSize().y - ch.GetBearing().y) * scale;
+
+		GLfloat w = ch.GetSize().x * scale;
+		GLfloat h = ch.GetSize().y * scale;
+		// Update VBO for each character
+		GLfloat vertices[4][4] = {
+			{ xpos,     ypos,       0.0, 0.0 },
+			{ xpos + w, ypos,       1.0, 0.0 },
+			{ xpos,     ypos + h,   0.0, 1.0 },
+			{ xpos + w, ypos + h,   1.0, 1.0 }
+		};
+		// Render glyph texture over quad
+		glBindTexture(GL_TEXTURE_2D, ch.GetTextureID());
+		// Update content of VBO memory
+		glBindBuffer(GL_ARRAY_BUFFER, s_Rendering->GetTextVBO());
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // Be sure to use glBufferSubData and not glBufferData
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		// Render quad
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); // GL_TRIANGLE_STRIP vs. GL_TRIANGLES, STRIP has more performance
+		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		x += (ch.GetAdvance() >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);

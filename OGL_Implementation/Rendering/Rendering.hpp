@@ -40,5 +40,6 @@ public:
     static void RotateWireframeColor();
 
     // Text
-    static void Draw2DText(const Text2D & text);
+    static void DrawText(const Text2D & text);
+    static void DrawText(const Text3D & text);
 };

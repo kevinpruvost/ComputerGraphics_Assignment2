@@ -103,8 +103,10 @@ int main()
 	entity.eulerAngles.y = 50.0f;
 	entity.eulerAngles.x = 70.0f;
 
-	Text2D text("Freetype",
-		{ 50.0f, 50.0f }, 1.0f, {0.5f, 0.8f, 0.2f});
+	Text2D text("The Milky Way",
+		{ 50.0f, 50.0f }, 20.0f, {0.6f, 0.0f, 1.0f});
+	Text3D text3("Earth",
+		{ 0.0f, 1.0f, 0.0f }, 1.0f, { 0.0f, 1.0f, 0.0f });
 
 	bool cameraLock = false;
 
@@ -125,6 +127,8 @@ int main()
 		ImGui::SliderFloat3("Scale", glm::value_ptr(entity.scale), 0.05f, 3.0f);
 
 		ImGui::Checkbox("Auto-Rotation", &autoRotation);
+
+		ImGui::ColorEdit4("Title color", glm::value_ptr(text.color), ImGuiColorEditFlags_::ImGuiColorEditFlags_NoInputs);
 
 		ImGui::End();
 		return true;
@@ -198,11 +202,12 @@ int main()
 			Rendering::RotateWireframeColor();
 
 		// display mode & activate shader
-		if (displayMode == 0) Rendering::DrawVertices(entity);
-		if (displayMode & 1)  Rendering::DrawFaces(entity);
-		if (displayMode & 2)  Rendering::DrawWireframe(entity);
+		//if (displayMode == 0) Rendering::DrawVertices(entity);
+		//if (displayMode & 1)  Rendering::DrawFaces(entity);
+		//if (displayMode & 2)  Rendering::DrawWireframe(entity);
 
-		Rendering::Draw2DText(text);
+		Rendering::DrawText(text3);
+		Rendering::DrawText(text);
 
 		// Drawing ImGui GUI
 		if (!gui.DrawGUI()) return false;
