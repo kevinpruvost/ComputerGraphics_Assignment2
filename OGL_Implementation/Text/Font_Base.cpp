@@ -24,6 +24,12 @@ Character::Character(const wchar_t character, FT_Face & face, bool & error)
         return;
     }
 
+    __size.x = face->glyph->bitmap.width;
+    __size.y = face->glyph->bitmap.rows;
+    __bearing.x = face->glyph->bitmap_left;
+    __bearing.y = face->glyph->bitmap_top;
+    __advance = face->glyph->advance.x;
+
     glGenTextures(1, &__texture);
     glBindTexture(GL_TEXTURE_2D, __texture);
     glTexImage2D(
@@ -50,6 +56,11 @@ Character::~Character()
     if (__error) glDeleteTextures(1, &__texture);
 }
 
+GLuint Character::GetTextureID() const { return __texture; }
+const glm::ivec2 & Character::GetSize() const { return __size; }
+const glm::ivec2 & Character::GetBearing() const { return __bearing; }
+GLuint Character::GetAdvance() const { return __advance; }
+
 Font_Base::Font_Base(const char * fontPath)
     : __face{ nullptr }
 {
@@ -74,19 +85,20 @@ Font_Base::Font_Base(const char * fontPath)
     for (GLubyte c = 0; c < 128; c++)
     {
         bool error;
-        Character newChar(c, __face, error);
+        Character * newChar = new Character(c, __face, error);
         if (!error)
         {
             LOG_PRINT(stderr, "Couldn't load '%c' character from '%s' font.\n", c, fontPath);
+            delete newChar;
             continue;
         }   
-        __characters.insert({c, newChar});
+        __characters.insert({c, std::unique_ptr<Character>(newChar)});
     }
+    FT_Done_Face(__face);
 }
 
 Font_Base::~Font_Base()
 {
-    FT_Done_Face(__face);
     if (FreeTypeInitialized)
     {
         FT_Done_FreeType(ft);
@@ -105,4 +117,9 @@ bool Font_Base::InitFreeType()
     }
     FreeTypeInitialized = true;
     return true;
+}
+
+const std::unordered_map<GLchar, std::unique_ptr<Character>> & Font_Base::GetCharacters() const
+{
+    return __characters;
 }

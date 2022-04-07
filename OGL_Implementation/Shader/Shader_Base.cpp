@@ -105,3 +105,38 @@ void Shader_Base::AddGlobalUbo(const GLuint bindingPoint, const char * bindingPo
 	GLuint id = glGetUniformBlockIndex(__program, bindingPointName);
 	glUniformBlockBinding(__program, id, bindingPoint);
 }
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb) const
+{
+	glUniform1f(glGetUniformLocation(__program, uniformName), nb);
+}
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs) const
+{
+	glUniform2f(glGetUniformLocation(__program, uniformName), nbs[0], nbs[1]);
+}
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2) const
+{
+	glUniform2f(glGetUniformLocation(__program, uniformName), nb1, nb2);
+}
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs) const
+{
+	glUniform3f(glGetUniformLocation(__program, uniformName), nbs[0], nbs[1], nbs[2]);
+}
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3) const
+{
+	glUniform3f(glGetUniformLocation(__program, uniformName), nb1, nb2, nb2);
+}
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs) const
+{
+	glUniform4f(glGetUniformLocation(__program, uniformName), nbs[0], nbs[1], nbs[2], nbs[3]);
+}
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4) const
+{
+	glUniform4f(glGetUniformLocation(__program, uniformName), nb1, nb2, nb2, nb3);
+}

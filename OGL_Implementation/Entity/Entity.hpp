@@ -37,18 +37,31 @@ public:
      * @param defaultEulerAngles 
      * @param defaultScale 
     */
-    Entity(const Mesh mesh,
-        const Shader pointShader,
-        const Shader wireframeShader,
-        const Shader faceShader,
+    Entity(const Mesh & mesh,
+        const Shader & pointShader,
+        const Shader & wireframeShader,
+        const Shader & faceShader,
+        const glm::vec3 & defaultPosition = glm::vec3(0.0f, 0.0f, 0.0f),
+        const glm::vec3 & defaultEulerAngles = glm::vec3(0.0f, 0.0f, 0.0f),
+        const glm::vec3 & defaultScale = glm::vec3(1.0f, 1.0f, 1.0f));
+
+    /**
+     * @brief Constructor with default point/wireframe/face shader already set
+     * /!\ I repeat, do not forget to set the appropriate default shaders
+     * @param mesh 
+     * @param defaultPosition 
+     * @param defaultEulerAngles 
+     * @param defaultScale 
+    */
+    Entity(const Mesh & mesh,
         const glm::vec3 & defaultPosition = glm::vec3(0.0f, 0.0f, 0.0f),
         const glm::vec3 & defaultEulerAngles = glm::vec3(0.0f, 0.0f, 0.0f),
         const glm::vec3 & defaultScale = glm::vec3(1.0f, 1.0f, 1.0f));
     ~Entity();
 
-    void SetPointShader(const Shader shader);
-    void SetWireframeShader(const Shader shader);
-    void SetFaceShader(const Shader shader);
+    void SetPointShader(const Shader & shader);
+    void SetWireframeShader(const Shader & shader);
+    void SetFaceShader(const Shader & shader);
     Shader GetPointShader() const;
     Shader GetWireframeShader() const;
     Shader GetFaceShader() const;
@@ -88,6 +101,6 @@ private:
     Texture __texture;
 };
 
-void SetDefaultPointShader(const Shader shader);
-void SetDefaultWireframeShader(const Shader shader);
-void SetDefaultFaceShader(const Shader shader);
+void SetDefaultPointShader(const Shader & shader);
+void SetDefaultWireframeShader(const Shader & shader);
+void SetDefaultFaceShader(const Shader & shader);

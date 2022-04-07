@@ -17,34 +17,38 @@ constexpr const char * windowName = "Assignment 2: Pruvost Kevin 2021400603";
 namespace Paths
 {
 // Window
-constexpr const char * windowIcon            = "resources/tsinghua_icon.png";
+constexpr const char * windowIcon            = "resources/Icons/tsinghua_icon.png";
 // Shaders
-constexpr const char * pointShaderVertex     = "resources/point.vert.glsl";
-constexpr const char * pointShaderFrag       = "resources/point.frag.glsl";
-constexpr const char * faceShaderVertex      = "resources/face.vert.glsl";
-constexpr const char * faceShaderFrag        = "resources/face.frag.glsl";
-constexpr const char * wireframeShaderVertex = "resources/wireframe.vert.glsl";
-constexpr const char * wireframeShaderFrag   = "resources/wireframe.frag.glsl";
+constexpr const char * pointShaderVertex     = "resources/Shaders/point.vert.glsl";
+constexpr const char * pointShaderFrag       = "resources/Shaders/point.frag.glsl";
+constexpr const char * faceShaderVertex      = "resources/Shaders/face.vert.glsl";
+constexpr const char * faceShaderFrag        = "resources/Shaders/face.frag.glsl";
+constexpr const char * wireframeShaderVertex = "resources/Shaders/wireframe.vert.glsl";
+constexpr const char * wireframeShaderFrag   = "resources/Shaders/wireframe.frag.glsl";
+constexpr const char * text2DShaderVertex    = "resources/Shaders/text2D.vert.glsl";
+constexpr const char * text2DShaderFrag      = "resources/Shaders/text2D.frag.glsl";
+constexpr const char * text3DShaderVertex    = "resources/Shaders/text3D.vert.glsl";
+constexpr const char * text3DShaderFrag      = "resources/Shaders/text3D.frag.glsl";
 // Planets
-constexpr const char * earth   = "resources/earth.jpg";
-constexpr const char * mercury = "resources/mercury.jpg";
-constexpr const char * sun     = "resources/sun.jpg";
-constexpr const char * moon    = "resources/moon.jpg";
-constexpr const char * neptune = "resources/neptune.jpg";
-constexpr const char * uranus  = "resources/uranus.jpg";
-constexpr const char * venus   = "resources/venus.jpg";
-constexpr const char * saturn  = "resources/saturn.jpg";
-constexpr const char * jupiter = "resources/jupiter.jpg";
-constexpr const char * mars    = "resources/mars.jpg";
+constexpr const char * earth   = "resources/Textures/earth.jpg";
+constexpr const char * mercury = "resources/Textures/mercury.jpg";
+constexpr const char * sun     = "resources/Textures/sun.jpg";
+constexpr const char * moon    = "resources/Textures/moon.jpg";
+constexpr const char * neptune = "resources/Textures/neptune.jpg";
+constexpr const char * uranus  = "resources/Textures/uranus.jpg";
+constexpr const char * venus   = "resources/Textures/venus.jpg";
+constexpr const char * saturn  = "resources/Textures/saturn.jpg";
+constexpr const char * jupiter = "resources/Textures/jupiter.jpg";
+constexpr const char * mars    = "resources/Textures/mars.jpg";
 // Fonts
-constexpr const char * arialFont = "resources/arial.ttf";
+constexpr const char * arialFont = "resources/Fonts/arial.ttf";
 namespace Models
 {
 namespace Rat
 {
-constexpr const char * objFile  = "resources/real_rat.obj";
-constexpr const char * material = "resources/real_rat.mtl";
-constexpr const char * texture  = "resources/rat.png";
+constexpr const char * objFile  = "resources/Models/real_rat.obj";
+constexpr const char * material = "resources/Models/real_rat.mtl";
+constexpr const char * texture  = "resources/Models/rat.png";
 }; // !Constants::Paths::Models::Rat
 }; // !Constants::Paths::Models
 }; // !Constants::Paths

@@ -34,7 +34,7 @@
 #include "OGL_Implementation\DebugInfo\FpsCounter.hpp"
 #include "OGL_Implementation\Texture.hpp"
 #include "OGL_Implementation\Rendering\Rendering.hpp"
-#include "OGL_Implementation\Text\Font.hpp"
+#include "OGL_Implementation\Text\Text.hpp"
 
 // Constants
 #include "Constants.hpp"
@@ -52,16 +52,32 @@ int main()
 	if (!window.Init(Constants::Window::windowName, Constants::Paths::windowIcon))
 		return EXIT_FAILURE;
 
+	Rendering::Init();
+
 	Font font = GenerateFont(Constants::Paths::arialFont);
+
+	// Setting default font
+	SetDefaultFont(font);
 
 	// Build and compile our shader program
 	Shader pointShader = GenerateShader(Constants::Paths::pointShaderVertex, Constants::Paths::pointShaderFrag);
 	Shader faceShader = GenerateShader(Constants::Paths::faceShaderVertex, Constants::Paths::faceShaderFrag);
 	Shader wireframeShader = GenerateShader(Constants::Paths::wireframeShaderVertex, Constants::Paths::wireframeShaderFrag);
+	Shader text2DShader = GenerateShader(Constants::Paths::text2DShaderVertex, Constants::Paths::text2DShaderFrag);
+	Shader text3DShader = GenerateShader(Constants::Paths::text3DShaderVertex, Constants::Paths::text3DShaderFrag);
+
+	// Setting default shaders
+	SetDefaultPointShader(pointShader);
+	SetDefaultFaceShader(faceShader);
+	SetDefaultWireframeShader(wireframeShader);
+	SetDefault2DTextShader(text2DShader);
+	SetDefault3DTextShader(text3DShader);
 
 	pointShader.AddGlobalUbo(0, "ViewProj");
 	faceShader.AddGlobalUbo(0, "ViewProj");
 	wireframeShader.AddGlobalUbo(0, "ViewProj");
+	text3DShader.AddGlobalUbo(0, "ViewProj");
+	text2DShader.AddGlobalUbo(1, "Projection");
 
 	// Load model
 	// Obj my_obj;
@@ -82,10 +98,13 @@ int main()
 
 	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 10.0f);
 
-	Entity entity(sphereMesh, pointShader, wireframeShader, faceShader);
+	Entity entity(sphereMesh);
 	entity.SetTexture(texture);
 	entity.eulerAngles.y = 50.0f;
 	entity.eulerAngles.x = 70.0f;
+
+	Text2D text("Freetype",
+		{ 50.0f, 50.0f }, 1.0f, {0.5f, 0.8f, 0.2f});
 
 	bool cameraLock = false;
 
@@ -182,6 +201,8 @@ int main()
 		if (displayMode == 0) Rendering::DrawVertices(entity);
 		if (displayMode & 1)  Rendering::DrawFaces(entity);
 		if (displayMode & 2)  Rendering::DrawWireframe(entity);
+
+		Rendering::Draw2DText(text);
 
 		// Drawing ImGui GUI
 		if (!gui.DrawGUI()) return false;

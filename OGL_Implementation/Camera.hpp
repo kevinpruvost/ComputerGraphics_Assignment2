@@ -180,5 +180,6 @@ private:
     int __wWidth, __wHeight;
     bool __hasMoved, __hasReshaped;
     GLuint __uboProjView;
+    GLuint __uboProjection;
     glm::mat4 __projection, __view;
 };

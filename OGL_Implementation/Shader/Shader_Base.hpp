@@ -53,6 +53,14 @@ public:
 	*/
 	void AddGlobalUbo(const GLuint bindingPoint, const char * bindingPointName) const;
 
+	void SetUniformFloat(const GLchar * uniformName, const GLfloat nb) const;
+	void SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs) const;
+	void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2) const;
+	void SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs) const;
+	void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3) const;
+	void SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs) const;
+	void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4) const;
+
 private:
 	/**
 	 * @brief Shader program id

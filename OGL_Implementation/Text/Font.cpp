@@ -17,6 +17,11 @@ Font::Font(const GLuint fontId)
 {
 }
 
+const std::unordered_map<GLchar, std::unique_ptr<Character>> & Font::GetCharacters() const
+{
+    return fontDB[__fontId]->GetCharacters();
+}
+
 GLuint Font::GetFontDatabaseID() const
 {
     return __fontId;

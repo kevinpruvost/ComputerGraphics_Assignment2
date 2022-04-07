@@ -20,6 +20,16 @@ public:
     Font(const GLuint fontId);
 
 public:
+    /**
+     * @brief Gets characters data (not mutable)
+     * @return characters
+    */
+    const std::unordered_map<GLchar, std::unique_ptr<Character>> & GetCharacters() const;
+
+    /**
+     * @brief Returns Font ID
+     * @return font id
+    */
     GLuint GetFontDatabaseID() const;
 
 public:

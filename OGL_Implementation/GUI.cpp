@@ -8,7 +8,7 @@
 #include "GUI.hpp"
 
 GUI::GUI(GLFWwindow * window)
-    : backgroundColor{ 0.1f, 0.1f, 0.15f, 1.0f }
+    : backgroundColor{ 0.0f, 0.0f, 0.08f, 1.0f }
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

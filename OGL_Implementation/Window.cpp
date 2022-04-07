@@ -77,7 +77,10 @@ bool Window::Init(const char * windowName, const char * iconPath)
 	};
 
 	// Setup OpenGL options
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST); // Depth
+	glEnable(GL_CULL_FACE); // Face Culling
+	glEnable(GL_BLEND); // Blending
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Blending options
 	return true;
 }
 
