@@ -76,8 +76,8 @@ int main()
 	pointShader.AddGlobalUbo(0, "ViewProj");
 	faceShader.AddGlobalUbo(0, "ViewProj");
 	wireframeShader.AddGlobalUbo(0, "ViewProj");
-	text3DShader.AddGlobalUbo(0, "ViewProj");
 	text2DShader.AddGlobalUbo(1, "Projection");
+	text3DShader.AddGlobalUbo(2, "ViewAndProj");
 
 	// Load model
 	// Obj my_obj;
@@ -97,6 +97,7 @@ int main()
 	}
 
 	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 10.0f);
+	mainCamera = &camera;
 
 	Entity entity(sphereMesh);
 	entity.SetTexture(texture);
@@ -104,9 +105,10 @@ int main()
 	entity.eulerAngles.x = 70.0f;
 
 	Text2D text("The Milky Way",
-		{ 50.0f, 50.0f }, 20.0f, {0.6f, 0.0f, 1.0f});
+		{ 0.5f, 0.95f }, 26.0f, {0.6f, 0.0f, 1.0f});
 	Text3D text3("Earth",
-		{ 0.0f, 1.0f, 0.0f }, 1.0f, { 0.0f, 1.0f, 0.0f });
+		{ 0.0f, 1.5f, 0.0f }, 0.3f, { 0.0f, 1.0f, 0.0f });
+	text3.centered = true;
 
 	bool cameraLock = false;
 
@@ -202,9 +204,9 @@ int main()
 			Rendering::RotateWireframeColor();
 
 		// display mode & activate shader
-		//if (displayMode == 0) Rendering::DrawVertices(entity);
-		//if (displayMode & 1)  Rendering::DrawFaces(entity);
-		//if (displayMode & 2)  Rendering::DrawWireframe(entity);
+		if (displayMode == 0) Rendering::DrawVertices(entity);
+		if (displayMode & 1)  Rendering::DrawFaces(entity);
+		if (displayMode & 2)  Rendering::DrawWireframe(entity);
 
 		Rendering::DrawText(text3);
 		Rendering::DrawText(text);

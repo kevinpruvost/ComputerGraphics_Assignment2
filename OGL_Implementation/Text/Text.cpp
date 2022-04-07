@@ -21,6 +21,7 @@ Text2D::Text2D(const Font & _font, const Shader & _shader, const std::string & _
     , color{ _color }
     , font{ _font }
     , shader{ _shader }
+    , centered{ true }
 {
 }
 
@@ -56,6 +57,7 @@ Text3D::Text3D(const Font & _font, const Shader & _shader, const std::string & _
     , color{ _color }
     , font{ _font }
     , shader{ _shader }
+    , centered{ true }
 {
 }
 

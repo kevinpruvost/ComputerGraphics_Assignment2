@@ -146,6 +146,11 @@ public:
      * @param windowHeight 
     */
     void SetWindowDimensions(int windowWidth, int windowHeight);
+    /**
+     * @brief Returns window dimensions
+     * @return dimensions (width, height)
+    */
+    glm::vec2 GetWindowDimensions() const;
 
 private:
     /**
@@ -181,5 +186,8 @@ private:
     bool __hasMoved, __hasReshaped;
     GLuint __uboProjView;
     GLuint __uboProjection;
+    GLuint __uboProjAndView;
     glm::mat4 __projection, __view;
 };
+
+extern Camera * mainCamera;

@@ -32,7 +32,7 @@ public:
      * @param Font
      * @param Shader
      * @param String to display
-     * @param Position (x, y) 
+     * @param Position (x, y) between 0.0f and 1.0f (screen size related)
      * @param Scale
      * @param Color (float, float, float)
     */
@@ -40,7 +40,7 @@ public:
     /**
      * @brief Shortened constructor (you need to set the default font & shader manually)
      * @param String to display
-     * @param Position (x, y)
+     * @param Position (x, y) between 0.0f and 1.0f (screen size related)
      * @param Scale
      * @param Color (float, float, float)
     */
@@ -53,6 +53,7 @@ public:
     glm::vec2 pos;
     GLfloat scale;
     glm::vec3 color;
+    bool centered;
 };
 
 /**
@@ -93,6 +94,7 @@ public:
     glm::vec3 pos;
     GLfloat scale;
     glm::vec3 color;
+    bool centered;
 };
 
 void SetDefaultFont(const Font & font);

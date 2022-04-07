@@ -9,6 +9,7 @@
 
 // C++ includes
 #include "OGL_Implementation\OpenGL_Timer.hpp"
+#include "OGL_Implementation\Camera.hpp"
 
 // Wireframe/Points Color
 static constexpr const glm::vec3 color = glm::vec3(0.1f, 0.95f, 0.1f);
@@ -125,10 +126,31 @@ void Rendering::DrawText(const Text2D & text)
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(s_Rendering->GetTextVAO());
 
+	const glm::vec2 & wDimensions = mainCamera->GetWindowDimensions();
+
 	// Iterate through all characters
 	const auto & characters = text.font.GetCharacters();
-	GLfloat x = text.pos.x, y = text.pos.y;
+	GLfloat x = text.pos.x * wDimensions.x, y = text.pos.y * wDimensions.y;
 	GLfloat scale = text.scale / text.font.GetFontSize();
+
+	// Centering text
+	if (text.centered)
+	{
+		GLfloat totalW = 0.0f;
+		int i = 0;
+		for (const auto & c : text.str)
+		{
+			const Character & ch = *characters.at(c);
+
+			if (i + 1 != text.str.size())
+				totalW += ((ch.GetAdvance() >> 6) * scale);
+			else
+				totalW += (ch.GetSize().x * scale);
+			++i;
+		}
+		x -= totalW / 2.0f;
+	}
+
 	for (const auto & c : text.str)
 	{
 		const Character & ch = *characters.at(c);
@@ -175,6 +197,25 @@ void Rendering::DrawText(const Text3D & text)
 	const auto & characters = text.font.GetCharacters();
 	GLfloat x = 0.0f, y = 0.0f;
 	GLfloat scale = text.scale / text.font.GetFontSize();
+
+	// Centering text
+	if (text.centered)
+	{
+		GLfloat totalW = 0.0f;
+		int i = 0;
+		for (const auto & c : text.str)
+		{
+			const Character & ch = *characters.at(c);
+
+			if (i + 1 != text.str.size())
+				totalW += ((ch.GetAdvance() >> 6) * scale);
+			else
+				totalW += (ch.GetSize().x * scale);
+			++i;
+		}
+		x -= totalW / 2.0f;
+	}
+
 	for (const auto & c : text.str)
 	{
 		const Character & ch = *characters.at(c);
