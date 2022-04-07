@@ -7,6 +7,9 @@
  *********************************************************************/
 #include "Rendering.hpp"
 
+// C++ includes
+#include "OGL_Implementation\OpenGL_Timer.hpp"
+
 // Wireframe/Points Color
 static constexpr const glm::vec3 color = glm::vec3(0.1f, 0.95f, 0.1f);
 static constexpr const glm::vec3 color1 = glm::vec3(1.0f, 0.95f, 0.1f);
@@ -25,7 +28,7 @@ Rendering::Rendering()
 	glGenBuffers(1, &__textVBO);
 	glBindVertexArray(__textVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, __textVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 4 * 4, NULL, GL_DYNAMIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -139,13 +142,10 @@ void Rendering::Draw2DText(const Text2D & text)
 		GLfloat w = ch.GetSize().x * text.scale;
 		GLfloat h = ch.GetSize().y * text.scale;
 		// Update VBO for each character
-		GLfloat vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0, 1.0 },
+		GLfloat vertices[4][4] = {
 			{ xpos,     ypos,       0.0, 0.0 },
 			{ xpos + w, ypos,       1.0, 0.0 },
-
 			{ xpos,     ypos + h,   0.0, 1.0 },
-			{ xpos + w, ypos,       1.0, 0.0 },
 			{ xpos + w, ypos + h,   1.0, 1.0 }
 		};
 		// Render glyph texture over quad
@@ -156,7 +156,7 @@ void Rendering::Draw2DText(const Text2D & text)
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		// Render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); // GL_TRIANGLE_STRIP vs. GL_TRIANGLES, STRIP has more performance
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		x += (ch.GetAdvance() >> 6) * text.scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
 	}

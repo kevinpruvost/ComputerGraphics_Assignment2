@@ -10,6 +10,9 @@
 // OpenGL includes
 #include <GLAD\glad.h>
 
+/**
+ * @brief Timer based on rendering time GPU side
+*/
 class OpenGL_Timer
 {
 public:
