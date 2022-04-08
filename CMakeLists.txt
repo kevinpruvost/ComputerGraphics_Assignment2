@@ -55,6 +55,7 @@ file (GLOB ASSIGNMENT_HEADERS
     OGL_Implementation/Mesh/*.hpp
     OGL_Implementation/Shader/*.hpp
     OGL_Implementation/Entity/*.hpp
+    OGL_Implementation/Entity/*.inl
     OGL_Implementation/Rendering/*.hpp
     OGL_Implementation/Text/*.hpp
 )

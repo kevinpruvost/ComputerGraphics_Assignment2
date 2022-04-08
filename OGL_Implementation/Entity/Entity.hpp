@@ -8,6 +8,8 @@
 #pragma once
 
 // Project includes
+#include "Entity_Skeleton.hpp"
+
 #include "OGL_Implementation\Mesh\Mesh.hpp"
 #include "OGL_Implementation\Shader\Shader.hpp"
 #include "OGL_Implementation\Texture.hpp"
@@ -27,7 +29,7 @@
  * position, rotation, scale.
  * Able to give model matrix.
 */
-class Entity
+class Entity : public Entity_Skeleton
 {
 public:
     /**
@@ -74,7 +76,10 @@ public:
      * @brief Calculates Model Matrix.
      * @return Model Matrix
     */
-    glm::mat4 GetModelMatrix() const;
+    virtual glm::mat4 GetModelMatrix() const;
+
+    // Entity_Skeleton abstract
+    virtual glm::vec3 Get3DPosition() const;
 
 public:
     /**

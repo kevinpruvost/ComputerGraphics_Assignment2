@@ -17,6 +17,7 @@
 // Project includes
 #include "Font.hpp"
 #include "OGL_Implementation\Shader\Shader.hpp"
+#include "OGL_Implementation\Entity\Entity_Skeleton.hpp"
 
 // C++ includes
 #include <string>
@@ -59,7 +60,7 @@ public:
 /**
  * @brief 3D Text class
 */
-class Text3D
+class Text3D : public Entity_Skeleton
 {
 public:
     /**
@@ -85,7 +86,10 @@ public:
      * @brief Calculates Model Matrix.
      * @return Model Matrix
     */
-    glm::mat4 GetModelMatrix() const;
+    virtual glm::mat4 GetModelMatrix() const;
+
+    // Entity_Skeleton abstract
+    virtual glm::vec3 Get3DPosition() const;
 
 public:
     Font font;

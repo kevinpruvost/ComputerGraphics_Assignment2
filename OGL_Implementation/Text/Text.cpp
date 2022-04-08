@@ -35,21 +35,6 @@ catch (const std::exception & e)
     throw std::runtime_error("Text2D Default Font/Shader");
 }
 
-void SetDefaultFont(const Font & font)
-{
-    defaultFont.reset(new Font(font.GetFontDatabaseID()));
-}
-
-void SetDefault2DTextShader(const Shader & shader)
-{
-    defaultText2DShader.reset(new Shader(shader.GetShaderDatabaseID()));
-}
-
-void SetDefault3DTextShader(const Shader & shader)
-{
-    defaultText3DShader.reset(new Shader(shader.GetShaderDatabaseID()));
-}
-
 Text3D::Text3D(const Font & _font, const Shader & _shader, const std::string & _str, const glm::vec3 & xyz, const GLfloat _scale, const glm::vec3 & _color)
     : str{ _str }
     , pos{ xyz }
@@ -79,9 +64,30 @@ glm::mat4 Text3D::GetModelMatrix() const
         {0.0f, 0.0f, 1.0f, 0.0f},
         {pos.x, pos.y, pos.z, 1.0f}
     };
-    // Rotation Matrix
-    //mat *= glm::toMat4(glm::quat(glm::radians(eulerAngles)));
     // Scaling Matrix
     mat = glm::scale(mat, glm::vec3(1.0f));
+    if (HasParent())
+        mat = this->GetParent()->GetModelMatrix() * mat;
     return mat;
+}
+
+glm::vec3 Text3D::Get3DPosition() const
+{
+    return pos;
+}
+
+
+void SetDefaultFont(const Font & font)
+{
+    defaultFont.reset(new Font(font.GetFontDatabaseID()));
+}
+
+void SetDefault2DTextShader(const Shader & shader)
+{
+    defaultText2DShader.reset(new Shader(shader.GetShaderDatabaseID()));
+}
+
+void SetDefault3DTextShader(const Shader & shader)
+{
+    defaultText3DShader.reset(new Shader(shader.GetShaderDatabaseID()));
 }

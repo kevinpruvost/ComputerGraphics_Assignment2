@@ -18,7 +18,8 @@ Entity::Entity(const Mesh & mesh,
     const glm::vec3 & defaultPosition,
     const glm::vec3 & defaultEulerAngles,
     const glm::vec3 & defaultScale)
-    : __mesh{ mesh }
+    : Entity_Skeleton()
+    , __mesh{ mesh }
     , __shaderPoint{ pointShader }
     , __shaderWireframe{ wireframeShader }
     , __shaderFace{ faceShader }
@@ -98,7 +99,15 @@ glm::mat4 Entity::GetModelMatrix() const
     mat *= glm::toMat4(glm::quat(glm::radians(eulerAngles)));
     // Scaling Matrix
     mat = glm::scale(mat, scale);
+
+    if (HasParent())
+        mat = this->GetParent()->GetModelMatrix() * mat;
     return mat;
+}
+
+glm::vec3 Entity::Get3DPosition() const
+{
+    return pos;
 }
 
 void SetDefaultPointShader(const Shader & shader)

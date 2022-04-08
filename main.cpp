@@ -108,6 +108,7 @@ int main()
 		{ 0.5f, 0.95f }, 26.0f, {0.6f, 0.0f, 1.0f});
 	Text3D text3("Earth",
 		{ 0.0f, 1.5f, 0.0f }, 0.3f, { 0.0f, 1.0f, 0.0f });
+	text3.SetParent(entity);
 	text3.centered = true;
 
 	bool cameraLock = false;

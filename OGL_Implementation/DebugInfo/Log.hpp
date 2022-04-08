@@ -10,7 +10,11 @@
 #include <iostream>
 #include <format>
 
-#define LOG_PRINT(fileName, fmt, ...) Log::Print(fileName, "[%s, Line %d]: " ## fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
+#ifdef NDEBUG
+    #define LOG_PRINT(fileName, fmt, ...)
+#else
+    #define LOG_PRINT(fileName, fmt, ...) Log::Print(fileName, "[%s, Line %d]: " ## fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
+#endif
 
 class Log
 {
