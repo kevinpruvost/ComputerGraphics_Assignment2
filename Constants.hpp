@@ -42,6 +42,8 @@ constexpr const char * jupiter = "resources/Textures/jupiter.jpg";
 constexpr const char * mars    = "resources/Textures/mars.jpg";
 // Fonts
 constexpr const char * arialFont = "resources/Fonts/arial.ttf";
+constexpr const char * starFont  = "resources/Fonts/star.ttf";
+constexpr const char * notesFont = "resources/Fonts/notes.ttf";
 namespace Models
 {
 namespace Rat

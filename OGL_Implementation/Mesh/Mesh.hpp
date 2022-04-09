@@ -32,6 +32,7 @@ public:
      * @param meshId
     */
     Mesh(const GLuint meshId);
+    Mesh & operator=(const Mesh & mesh);
 
 public:
     GLuint meshId() const;
@@ -49,7 +50,7 @@ public:
     Mesh_Base::DrawMode GetDrawMode() const;
 
 private:
-    const GLuint __meshId;
+    GLuint __meshId;
 };
 
 

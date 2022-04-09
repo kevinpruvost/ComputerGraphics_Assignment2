@@ -14,6 +14,12 @@ Mesh::Mesh(const GLuint meshId)
 {
 }
 
+Mesh & Mesh::operator=(const Mesh & mesh)
+{
+	__meshId = mesh.meshId();
+	return *this;
+}
+
 GLuint Mesh::meshId() const { return __meshId; }
 GLuint Mesh::verticesVAO() const { return meshesDB[__meshId]->GetVerticesVAO(); }
 GLuint Mesh::facesVAO() const { return meshesDB[__meshId]->GetFacesVAO(); }

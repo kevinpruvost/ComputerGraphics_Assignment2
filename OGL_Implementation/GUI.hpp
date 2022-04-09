@@ -41,7 +41,6 @@ public:
     void AddCallback(const std::function<bool()> & lambda);
 
 public:
-    float backgroundColor[4];
 
 private:
     ImGuiIO * io;

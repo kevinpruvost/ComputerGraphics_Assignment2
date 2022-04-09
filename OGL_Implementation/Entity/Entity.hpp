@@ -68,6 +68,7 @@ public:
     Shader GetWireframeShader() const;
     Shader GetFaceShader() const;
 
+    void SetMesh(const Mesh & mesh);
     void SetTexture(const Texture & texture);
     const Texture & GetTexture() const;
 
@@ -76,10 +77,15 @@ public:
      * @brief Calculates Model Matrix.
      * @return Model Matrix
     */
-    virtual glm::mat4 GetModelMatrix() const;
+    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) const;
 
     // Entity_Skeleton abstract
     virtual glm::vec3 Get3DPosition() const;
+
+    void Rotate(const glm::vec3 & rotation);
+    void RotateX(const float rotation);
+    void RotateY(const float rotation);
+    void RotateZ(const float rotation);
 
 public:
     /**
@@ -98,7 +104,7 @@ private:
     /**
      * @brief Mesh Identifier.
     */
-    const Mesh __mesh;
+    Mesh __mesh;
     /**
      * @brief Shader Identifier.
     */

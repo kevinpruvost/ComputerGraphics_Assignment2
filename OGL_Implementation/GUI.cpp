@@ -8,7 +8,6 @@
 #include "GUI.hpp"
 
 GUI::GUI(GLFWwindow * window)
-    : backgroundColor{ 0.0f, 0.0f, 0.08f, 1.0f }
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -52,8 +51,6 @@ bool GUI::DrawGUI()
         "- Object View Mode Switch: C\n"
         "- Wireframe Color Change: P\n"
     );
-
-    ImGui::ColorEdit4("Background Color", backgroundColor, ImGuiColorEditFlags_::ImGuiColorEditFlags_NoInputs);
     ImGui::End();
 
     for (auto & callback : __callbacks)

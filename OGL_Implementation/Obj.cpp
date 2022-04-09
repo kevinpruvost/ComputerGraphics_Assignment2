@@ -118,15 +118,14 @@ bool Obj::TryLoad(const char * fileName)
 						}
 					}
 				}
-//				iss >> f;
 				faces.emplace_back(v, vt, vn);
 			}
-			// Texture Coordinate
+			// Texture Coordinate (inversed y)
 			else if (cmd.compare("vt") == 0)
 			{
 				GLfloat x, y;
 				iss >> x >> y;
-				verticesTextureCoordinates.emplace_back(x, y);
+				verticesTextureCoordinates.emplace_back(x, 1.0f - y);
 			}
 			// Vertex Normals
 			else if (cmd.compare("vn") == 0)

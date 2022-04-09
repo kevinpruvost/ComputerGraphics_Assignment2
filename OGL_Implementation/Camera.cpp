@@ -25,7 +25,7 @@ Camera::Camera(int windowWidth, int windowHeight,
     , Pitch{ pitch }
     , __fov{ 45.0f }
     , __zNear{ 0.1f }
-    , __zFar{ 100.0f }
+    , __zFar{ 10000.0f }
     , __hasMoved{ true }
     , __hasReshaped{ true }
     , __uboProjView{ 0 }

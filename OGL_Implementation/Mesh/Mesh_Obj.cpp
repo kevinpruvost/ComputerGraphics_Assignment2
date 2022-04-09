@@ -70,6 +70,7 @@ void Mesh_Obj::bindFaces(const Obj & obj)
 			data.emplace_back(obj.verticesNormals[vnid].z);
 			data.emplace_back(obj.verticesTextureCoordinates[vtid].x);
 			data.emplace_back(obj.verticesTextureCoordinates[vtid].y);
+			LOG_PRINT(stdout, "%d: %f\\%f\n", vtid, obj.verticesTextureCoordinates[vtid].x, obj.verticesTextureCoordinates[vtid].y);
 		}
 	}
 

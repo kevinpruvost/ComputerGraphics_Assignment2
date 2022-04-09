@@ -7,6 +7,9 @@
  *********************************************************************/
 #include "Entity.hpp"
 
+// C++ includes
+#include <limits>
+
 static std::unique_ptr<Shader> defaultPointShader(nullptr);
 static std::unique_ptr<Shader> defaultWireframeShader(nullptr);
 static std::unique_ptr<Shader> defaultFaceShader(nullptr);
@@ -74,6 +77,11 @@ Shader Entity::GetFaceShader() const
     return __shaderFace;
 }
 
+void Entity::SetMesh(const Mesh & mesh)
+{
+    __mesh = Mesh(mesh);
+}
+
 void Entity::SetTexture(const Texture & texture)
 {
     __texture = texture;
@@ -86,7 +94,7 @@ const Texture & Entity::GetTexture() const
 
 const Mesh & Entity::GetMesh() const { return __mesh; }
 
-glm::mat4 Entity::GetModelMatrix() const
+glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale) const
 {
     // Transformation Matrix
     glm::mat4 mat = {
@@ -96,18 +104,42 @@ glm::mat4 Entity::GetModelMatrix() const
         {pos.x, pos.y, pos.z, 1.0f}
     };
     // Rotation Matrix
-    mat *= glm::toMat4(glm::quat(glm::radians(eulerAngles)));
+    if (!ignoreRotation)
+        mat *= glm::toMat4(glm::quat(glm::radians(eulerAngles)));
     // Scaling Matrix
-    mat = glm::scale(mat, scale);
+    if (!ignoreScale)
+        mat = glm::scale(mat, scale);
 
     if (HasParent())
-        mat = this->GetParent()->GetModelMatrix() * mat;
+        mat = this->GetParent()->GetModelMatrix(false, true) * mat;
     return mat;
 }
 
 glm::vec3 Entity::Get3DPosition() const
 {
     return pos;
+}
+
+void Entity::Rotate(const glm::vec3 & rotation)
+{
+    RotateX(rotation.x);
+    RotateY(rotation.y);
+    RotateZ(rotation.z);
+}
+
+void Entity::RotateX(const float rotation)
+{
+    eulerAngles.x = std::fmod(eulerAngles.x + rotation, 360.0f - std::numeric_limits<float>::epsilon());
+}
+
+void Entity::RotateY(const float rotation)
+{
+    eulerAngles.y = std::fmod(eulerAngles.y + rotation, 360.0f - std::numeric_limits<float>::epsilon());
+}
+
+void Entity::RotateZ(const float rotation)
+{
+    eulerAngles.z = std::fmod(eulerAngles.z + rotation, 360.0f - std::numeric_limits<float>::epsilon());
 }
 
 void SetDefaultPointShader(const Shader & shader)
