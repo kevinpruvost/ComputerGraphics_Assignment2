@@ -12,12 +12,29 @@
 #include <algorithm>
 #include <chrono>
 
+// Project includes
+#include "OGL_Implementation\DebugInfo\Log.hpp"
+
 constexpr const std::array<std::array<float, 3>, 4> colorsRand = { {
 	{0.03f, 0.67f, 0.207f}, // Dark Green
 	{0.498f, 0.105f, 0.8901f}, // Clear Purple
 	{0.176f, 0.564f, 0.929f}, // Cyanish
 	{0.909f, 0.745f, 0.2901f} // Weird Yellow
 } };
+
+static std::vector<std::string> tokenize(std::string const & str, const char * const delim)
+{
+	std::vector<std::string> out;
+	size_t start;
+	size_t end = 0;
+
+	while ((start = str.find_first_not_of(delim, end)) != std::string::npos)
+	{
+		end = str.find(delim, start);
+		out.push_back(str.substr(start, end - start));
+	}
+	return out;
+}
 
 Obj::Obj()
 {
@@ -42,6 +59,7 @@ bool Obj::TryLoad(const char * fileName)
 		{
 			std::getline(in, buf);
 			std::istringstream iss(buf);
+			cmd.clear();
 			iss >> cmd;
 	
 			if (cmd.size() == 0 || cmd[0] == '#' || cmd[0] == '\n')
@@ -53,29 +71,97 @@ bool Obj::TryLoad(const char * fileName)
 			{
 				GLfloat x, y, z;
 				iss >> x >> y >> z;
-				vertices.emplace_back(x, y, z);
+				verticesPos.emplace_back(x, y, z);
 			}
-			// TODO: Incomplete Face Parser .obj
 			// Face
 			else if (cmd.compare("f") == 0)
 			{
-				int f[3];
-				iss >> f[0] >> f[1] >> f[2];
-				// Assigning a color
-				std::array<float, 3> c = colorsRand[rand() % 4];
-				faces.emplace_back(f, c.data());
+				std::string f;
+				std::getline(iss, f, '\n');
+				std::stringstream fStream(f);
+
+				std::vector<int> v, vt, vn;
+
+				while (!fStream.eof())
+				{
+					std::string facePart;
+					fStream >> facePart;
+					// Only Vertex + Normals
+					if (facePart.find("//") != std::string::npos)
+					{
+						std::vector<std::string> parts = tokenize(facePart, "//");
+						
+						v.emplace_back(std::stoi(parts[0]));
+						vn.emplace_back(std::stoi(parts[1]));
+					}
+					else
+					{
+						std::vector<std::string> parts = tokenize(facePart, "/");
+
+						switch (parts.size())
+						{
+							// V / VT / VN
+							case 3:
+								v.emplace_back(std::stoi(parts[0]));
+								vt.emplace_back(std::stoi(parts[1]));
+								vn.emplace_back(std::stoi(parts[2]));
+								break;
+							// V / VT
+							case 2:
+								v.emplace_back(std::stoi(parts[0]));
+								vt.emplace_back(std::stoi(parts[1]));
+								break;
+							// V
+							case 1:
+								v.emplace_back(std::stoi(parts[0]));
+								break;
+						}
+					}
+				}
+//				iss >> f;
+				faces.emplace_back(v, vt, vn);
 			}
 			// Texture Coordinate
 			else if (cmd.compare("vt") == 0)
 			{
+				GLfloat x, y;
+				iss >> x >> y;
+				verticesTextureCoordinates.emplace_back(x, y);
 			}
 			// Vertex Normals
+			else if (cmd.compare("vn") == 0)
+			{
+				GLfloat x, y, z;
+				iss >> x >> y >> z;
+				verticesNormals.emplace_back(x, y, z);
+			}
+			// Space Vertices
 			else if (cmd.compare("vp") == 0)
 			{
 			}
-			// Space Vertices
-			else if (cmd.compare("vn") == 0)
+			// Material File used
+			else if (cmd.compare("mtllib") == 0)
 			{
+				std::string path;
+				iss >> path;
+				materialNames.emplace_back();
+			}
+			// Material Name used
+			else if (cmd.compare("usemtl") == 0)
+			{
+				std::string path;
+				iss >> path;
+				materialNames.emplace_back();
+			}
+			// Smooth Shading (http://paulbourke.net/dataformats/obj/)
+			else if (cmd.compare("s") == 0)
+			{
+
+			}
+			// Object group (not important)
+			else if (cmd.compare("o") == 0)
+			{
+
 			}
 			else
 			{

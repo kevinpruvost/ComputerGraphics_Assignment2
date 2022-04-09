@@ -27,8 +27,11 @@ class Obj
 public:
 	Obj();
 
-	std::vector<Vertex> vertices;
-	std::vector<TriFace> faces;
+	std::vector<glm::vec3> verticesPos;
+	std::vector<glm::vec2> verticesTextureCoordinates;
+	std::vector<glm::vec3> verticesNormals;
+	std::vector<std::string> materialNames;
+	std::vector<Face> faces;
 
 	/**
 	 * @brief Returns Count of triangle faces.
@@ -39,7 +42,7 @@ public:
 	 * @brief Returns Count of vertices.
 	 * @return count of vertices
 	*/
-	int numVertices() const { return int(vertices.size()); }
+	int numVertices() const { return int(verticesPos.size()); }
 
 	/**
 	 * @brief Tries loading of a .obj file

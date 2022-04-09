@@ -40,7 +40,7 @@
 #include "Constants.hpp"
 
 // Display Mode
-GLuint displayMode = 1; // 0 = Point, 1 = Face, 2 = Wireframe, 3 = Face + Wireframe
+GLuint displayMode = 2; // 0 = Point, 1 = Face, 2 = Wireframe, 3 = Face + Wireframe
 
 // pointers to model / view / projection matrices
 glm::mat4 model(1);
@@ -80,13 +80,14 @@ int main()
 	text3DShader.AddGlobalUbo(2, "ViewAndProj");
 
 	// Load model
-	// Obj my_obj;
-	// if (!my_obj.TryLoad(Constants::Paths::Models::Rat::objFile))
-	// {
-	// 	std::cerr << "Couldn't load " << Constants::Paths::Models::Rat::objFile << std::endl;
-	// 	return EXIT_FAILURE;
-	// } 
-	// Mesh mesh = GenerateMesh(my_obj);
+	Obj my_obj;
+	if (!my_obj.TryLoad(Constants::Paths::Models::Rat::objFile))
+	{
+		std::cerr << "Couldn't load " << Constants::Paths::Models::Rat::objFile << std::endl;
+		return EXIT_FAILURE;
+	} 
+	Mesh mesh = GenerateMesh(my_obj);
+	Entity rat(mesh, { 1.0f, 1.0f, 0.0f });
 
 	Mesh sphereMesh = GenerateMeshSphere(1.0f, 36, 18, false);
 	Texture texture;
@@ -98,6 +99,8 @@ int main()
 
 	Camera camera(window.windowWidth(), window.windowHeight(), 0.0f, 0.0f, 10.0f);
 	mainCamera = &camera;
+
+	rat.SetTexture(texture);
 
 	Entity entity(sphereMesh);
 	entity.SetTexture(texture);
@@ -132,6 +135,13 @@ int main()
 		ImGui::Checkbox("Auto-Rotation", &autoRotation);
 
 		ImGui::ColorEdit4("Title color", glm::value_ptr(text.color), ImGuiColorEditFlags_::ImGuiColorEditFlags_NoInputs);
+
+//		ImGui::BeginChildFrame(5, { 300.0f, 50.0f });
+		if (ImGui::Button("Activate the Funny", { 300.0f, 50.0 }))
+		{
+
+		}
+//		ImGui::EndChildFrame();
 
 		ImGui::End();
 		return true;
@@ -205,9 +215,12 @@ int main()
 			Rendering::RotateWireframeColor();
 
 		// display mode & activate shader
-		if (displayMode == 0) Rendering::DrawVertices(entity);
-		if (displayMode & 1)  Rendering::DrawFaces(entity);
-		if (displayMode & 2)  Rendering::DrawWireframe(entity);
+		for (const auto & e : { entity, rat })
+		{
+			if (displayMode == 0) Rendering::DrawVertices(e);
+			if (displayMode & 1)  Rendering::DrawFaces(e);
+			if (displayMode & 2)  Rendering::DrawWireframe(e);
+		}
 
 		Rendering::DrawText(text3);
 		Rendering::DrawText(text);

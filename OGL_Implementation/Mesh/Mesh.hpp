@@ -46,6 +46,8 @@ public:
     GLuint facesEBO() const;
     bool isUsingEBO() const;
 
+    Mesh_Base::DrawMode GetDrawMode() const;
+
 private:
     const GLuint __meshId;
 };

@@ -32,6 +32,11 @@ bool Mesh::isUsingEBO() const
 	return meshesDB[__meshId]->IsUsingEBO();
 }
 
+Mesh_Base::DrawMode Mesh::GetDrawMode() const
+{
+	return meshesDB[__meshId]->GetDrawMode();
+}
+
 Mesh GenerateMeshSphere(float radius, int sectors, int stacks, bool smooth)
 {
 	meshesDB.emplace_back(new Mesh_Sphere(radius, sectors, stacks, smooth));

@@ -31,6 +31,7 @@ private:
     void buildVerticesSmooth();
     void buildVerticesFlat();
 
+    DrawMode GetDrawMode() const override;
 
 private:
     float __radius;

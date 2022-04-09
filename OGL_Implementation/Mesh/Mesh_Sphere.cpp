@@ -332,3 +332,8 @@ void Mesh_Sphere::buildVerticesFlat()
 
     bindVnts(vnts, indices);
 }
+
+Mesh_Base::DrawMode Mesh_Sphere::GetDrawMode() const
+{
+    return DrawMode::DrawElements;
+}

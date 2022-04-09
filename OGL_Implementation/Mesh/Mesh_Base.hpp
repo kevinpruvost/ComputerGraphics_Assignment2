@@ -30,6 +30,14 @@ public:
 
     virtual GLuint GetFacesEBO() const = 0;
     virtual bool IsUsingEBO() const = 0;
+
+    enum class DrawMode : unsigned char
+    {
+        DrawArrays = 0,
+        DrawElements = 1
+    };
+    virtual DrawMode GetDrawMode() const = 0;
+
 private:
 
 protected:

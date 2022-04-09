@@ -24,6 +24,8 @@ public:
     GLuint GetFacesEBO() const override;
     bool IsUsingEBO() const override;
 
+    DrawMode GetDrawMode() const override;
+
 private:
     void bindFaces(const Obj & obj);
     void bindVertices(const Obj & obj);

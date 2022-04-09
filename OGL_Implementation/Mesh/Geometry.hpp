@@ -8,7 +8,9 @@
 #pragma once
 
 // C++ includes
+#include <array>
 #include <cmath>
+#include <vector>
 
 // GLM includes
 #include <glm\glm.hpp>
@@ -18,45 +20,21 @@ const double Pi = acos(-1.0f);
 /**
  * @brief Contains information about Tri Faces.
 */
-struct TriFace
+struct Face
 {
-	int v[3];
-	float c[3];
+	std::vector<int> v;
+	std::vector<int> vt;
+	std::vector<int> vn;
 
-	/**
-	 * @brief Split array constructor
-	 * @param f0
-	 * @param f1
-	 * @param f2
-	 * @param c0
-	 * @param c1
-	 * @param c2
-	*/
-	TriFace(int f0, int f1, int f2, float c0, float c1, float c2)
-		: v{ f0, f1, f2 }
-		, c{ c0, c1, c2 }
-	{
-	}
-
-	/** Array constructor
-	 * @brief
+	/** 
+	 * @brief Array constructor
 	 * @param fd
-	 * @param cd
 	*/
-	TriFace(int fd[3], float cd[3])
-		: v{ fd[0], fd[1], fd[2] }
-		, c{ cd[0], cd[1], cd[2] }
+	Face(const std::vector<int> & _v, const std::vector<int> & _vt = {}, const std::vector<int> & _vn = {})
+		: v{ _v }
+		, vt{ _vt }
+		, vn{ _vn }
 	{
-	}
-
-	int & operator[](int idx)
-	{
-		return v[idx];
-	}
-
-	const int & operator[](int idx) const
-	{
-		return v[idx];
 	}
 };
 

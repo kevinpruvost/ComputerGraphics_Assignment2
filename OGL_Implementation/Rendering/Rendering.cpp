@@ -60,11 +60,21 @@ void Rendering::DrawFaces(const Entity & entity)
 	glUniformMatrix4fv(glGetUniformLocation(shader.Program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	glUniform1i(glGetUniformLocation(shader.Program(), "_texture"), 0);
+	if (entity.GetTexture().GetWidth() != 0)
+		glBindTexture(GL_TEXTURE_2D, entity.GetTexture().GetTexture());
+	else
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-	glBindTexture(GL_TEXTURE_2D, entity.GetTexture().GetTexture());
 	glBindVertexArray(entity.GetMesh().facesVAO());
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawElements(GL_TRIANGLES, entity.GetMesh().facesNVert(), GL_UNSIGNED_INT, 0);
+	switch (entity.GetMesh().GetDrawMode())
+	{
+		case Mesh_Base::DrawMode::DrawElements:
+			glDrawElements(GL_TRIANGLES, entity.GetMesh().facesNVert(), GL_UNSIGNED_INT, 0);
+			break;
+		case Mesh_Base::DrawMode::DrawArrays:
+			glDrawArrays(GL_TRIANGLES, 0, entity.GetMesh().facesNVert());
+			break;
+	}
 	glBindVertexArray(0);
 }
 
@@ -87,7 +97,16 @@ void Rendering::DrawWireframe(const Entity & entity)
 
 	glBindVertexArray(entity.GetMesh().facesVAO());
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawElements(GL_TRIANGLES, entity.GetMesh().facesNVert(), GL_UNSIGNED_INT, 0);
+	switch (entity.GetMesh().GetDrawMode())
+	{
+		case Mesh_Base::DrawMode::DrawElements:
+			glDrawElements(GL_TRIANGLES, entity.GetMesh().facesNVert(), GL_UNSIGNED_INT, 0);
+			break;
+		case Mesh_Base::DrawMode::DrawArrays:
+			glDrawArrays(GL_TRIANGLES, 0, entity.GetMesh().facesNVert());
+			break;
+	}
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glBindVertexArray(0);
 }
 
