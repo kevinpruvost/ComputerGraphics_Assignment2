@@ -50,16 +50,22 @@ void Rendering::Init()
 	s_Rendering.reset(new Rendering());
 }
 
-void Rendering::DrawFaces(const Entity & entity)
+void Rendering::DrawFaces(Entity & entity)
 {
-	const Shader shader = entity.GetFaceShader();
-	const glm::mat4 model = entity.GetModelMatrix();
+	Shader & shader = entity.GetFaceShader();
+	// Current Heaviest Line
+	const glm::mat4 & model = entity.GetModelMatrix();
 
 	shader.Use();
 
-	glUniformMatrix4fv(glGetUniformLocation(shader.Program(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+	// Heaviest line (~40% time passed here in the function)
+	//auto id = glGetUniformLocation(shader.Program(), "model");
+	//glUniformMatrix4fv(id, 1, GL_FALSE, glm::value_ptr(model));
+	shader.SetUniformMatrix4f("model", model);
 
-	glUniform1i(glGetUniformLocation(shader.Program(), "_texture"), 0);
+	// To shader->SetInt
+	shader.SetUniformInt("_texture", 0);
+	glActiveTexture(GL_TEXTURE0);
 	if (entity.GetTexture().GetWidth() != 0)
 		glBindTexture(GL_TEXTURE_2D, entity.GetTexture().GetTexture());
 	else
@@ -78,22 +84,17 @@ void Rendering::DrawFaces(const Entity & entity)
 	glBindVertexArray(0);
 }
 
-void Rendering::DrawWireframe(const Entity & entity)
+void Rendering::DrawWireframe(Entity & entity)
 {
-	const Shader shader = entity.GetWireframeShader();
-	const glm::mat4 model = entity.GetModelMatrix();
+	Shader & shader = entity.GetWireframeShader();
+	const glm::mat4 & model = entity.GetModelMatrix();
 	
 	shader.Use();
 
-	// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.Program(), "model");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	shader.SetUniformMatrix4f("model", model);
 
 	// use the same color for all points
-	GLint colorLoc = glGetUniformLocation(shader.Program(), "ourColor");
-	glUniform3fv(colorLoc, 1, glm::value_ptr(wireframeColors[0]));
+	shader.SetUniformFloat("ourColor", wireframeColors[0]);
 
 	glBindVertexArray(entity.GetMesh().facesVAO());
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -110,22 +111,17 @@ void Rendering::DrawWireframe(const Entity & entity)
 	glBindVertexArray(0);
 }
 
-void Rendering::DrawVertices(const Entity & entity)
+void Rendering::DrawVertices(Entity & entity)
 {
-	const Shader shader = entity.GetPointShader();
-	const glm::mat4 model = entity.GetModelMatrix();
+	Shader & shader = entity.GetPointShader();
+	const glm::mat4 & model = entity.GetModelMatrix();
 	
 	shader.Use();
 
-	// get uniform locations
-	GLint modelLoc = glGetUniformLocation(shader.Program(), "model");
-
-	// pass uniform values to shader
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	shader.SetUniformMatrix4f("model", model);
 
 	// use the same color for all points
-	GLint colorLoc = glGetUniformLocation(shader.Program(), "ourColor");
-	glUniform3fv(colorLoc, 1, glm::value_ptr(wireframeColors[0]));
+	shader.SetUniformFloat("ourColor", wireframeColors[0]);
 
 	glBindVertexArray(entity.GetMesh().verticesVAO());
 	glDrawArrays(GL_POINTS, 0, entity.GetMesh().verticesNVert());
@@ -137,7 +133,7 @@ void Rendering::RotateWireframeColor()
 	std::rotate(wireframeColors.begin(), wireframeColors.begin() + 1, wireframeColors.end());
 }
 
-void Rendering::DrawText(const Text2D & text)
+void Rendering::DrawText(Text2D & text)
 {
 	text.shader.Use();
 	text.shader.SetUniformFloat("textColor", text.color);
@@ -202,12 +198,12 @@ void Rendering::DrawText(const Text2D & text)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Rendering::DrawText(const Text3D & text)
+void Rendering::DrawText(Text3D & text)
 {
 	text.shader.Use();
 	text.shader.SetUniformFloat("textColor", text.color);
 
-	glUniformMatrix4fv(glGetUniformLocation(text.shader.Program(), "model"), 1, GL_FALSE, glm::value_ptr(text.GetModelMatrix()));
+	text.shader.SetUniformMatrix4f("model", text.GetModelMatrix());
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(s_Rendering->GetTextVAO());

@@ -30,7 +30,7 @@ protected:
 public:
     virtual ~Entity_Skeleton();
 
-    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) const = 0;
+    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) = 0;
     virtual glm::vec3 Get3DPosition() const = 0;
 
 public:
@@ -39,6 +39,9 @@ public:
 
     template<Entity_Skeleton_Based Parent = Entity_Skeleton>
     const Parent * GetParent() const;
+
+    template<Entity_Skeleton_Based Parent = Entity_Skeleton>
+    Parent * GetParent();
 
     template<Entity_Skeleton_Based Child = Entity_Skeleton>
     void AddChild(const Child * child);

@@ -7,8 +7,16 @@
  *********************************************************************/
 #include "Shader_Base.hpp"
 
+// GLM includes
+#include <glm\gtc\type_ptr.hpp>
+
 // Project includes
 #include "OGL_Implementation\DebugInfo\Log.hpp"
+
+/**
+ * @brief Program memory for Use() because it is a heavy process
+*/
+static GLuint programUsed = -1;
 
 Shader_Base::Shader_Base(const GLchar * vertexPath, const GLchar * fragmentPath)
 {
@@ -87,6 +95,7 @@ Shader_Base::Shader_Base(const GLchar * vertexPath, const GLchar * fragmentPath)
 
 Shader_Base::~Shader_Base()
 {
+	if (__program == programUsed) programUsed = (GLuint)(-1);
 	glDeleteProgram(__program);
 }
 
@@ -97,7 +106,11 @@ GLuint Shader_Base::Program() const
 
 void Shader_Base::Use() const
 {
-	glUseProgram(__program);
+	if (programUsed != __program)
+	{
+		programUsed = __program;
+		glUseProgram(__program);
+	}
 }
 
 void Shader_Base::AddGlobalUbo(const GLuint bindingPoint, const char * bindingPointName) const
@@ -106,37 +119,55 @@ void Shader_Base::AddGlobalUbo(const GLuint bindingPoint, const char * bindingPo
 	glUniformBlockBinding(__program, id, bindingPoint);
 }
 
-void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb) const
+void Shader_Base::SetUniformInt(const GLchar * uniformName, const GLint nb)
 {
-	glUniform1f(glGetUniformLocation(__program, uniformName), nb);
+	glUniform1i(GetUniformId(uniformName), nb);
 }
 
-void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs) const
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb)
 {
-	glUniform2f(glGetUniformLocation(__program, uniformName), nbs[0], nbs[1]);
+	glUniform1f(GetUniformId(uniformName), nb);
 }
 
-void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2) const
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs)
 {
-	glUniform2f(glGetUniformLocation(__program, uniformName), nb1, nb2);
+	glUniform2fv(GetUniformId(uniformName), 1, glm::value_ptr(nbs));
 }
 
-void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs) const
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2)
 {
-	glUniform3f(glGetUniformLocation(__program, uniformName), nbs[0], nbs[1], nbs[2]);
+	glUniform2f(GetUniformId(uniformName), nb1, nb2);
 }
 
-void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3) const
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs)
 {
-	glUniform3f(glGetUniformLocation(__program, uniformName), nb1, nb2, nb2);
+	glUniform3fv(GetUniformId(uniformName), 1, glm::value_ptr(nbs));
 }
 
-void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs) const
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3)
 {
-	glUniform4f(glGetUniformLocation(__program, uniformName), nbs[0], nbs[1], nbs[2], nbs[3]);
+	glUniform3f(GetUniformId(uniformName), nb1, nb2, nb2);
 }
 
-void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4) const
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs)
 {
-	glUniform4f(glGetUniformLocation(__program, uniformName), nb1, nb2, nb2, nb3);
+	glUniform4fv(GetUniformId(uniformName), 1, glm::value_ptr(nbs));
+}
+
+void Shader_Base::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4)
+{
+	glUniform4f(GetUniformId(uniformName), nb1, nb2, nb2, nb3);
+}
+
+void Shader_Base::SetUniformMatrix4f(const GLchar * uniformName, const glm::mat4 & mat)
+{
+	glUniformMatrix4fv(GetUniformId(uniformName), 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+GLuint Shader_Base::GetUniformId(const GLchar * uniformName)
+{
+	if (__uniformIds.contains(uniformName))
+		return __uniformIds[uniformName];
+	auto pair = __uniformIds.emplace(uniformName, glGetUniformLocation(__program, uniformName));
+	return pair.second;
 }

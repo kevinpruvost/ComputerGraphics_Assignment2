@@ -33,13 +33,13 @@ public:
     static void Init();
 
     // Entities
-    static void DrawFaces(const Entity & entity);
-    static void DrawWireframe(const Entity & entity);
-    static void DrawVertices(const Entity & entity);
+    static void DrawFaces(Entity & entity);
+    static void DrawWireframe(Entity & entity);
+    static void DrawVertices(Entity & entity);
 
     static void RotateWireframeColor();
 
     // Text
-    static void DrawText(const Text2D & text);
-    static void DrawText(const Text3D & text);
+    static void DrawText(Text2D & text);
+    static void DrawText(Text3D & text);
 };

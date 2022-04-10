@@ -34,43 +34,53 @@ GLuint Shader::GetShaderDatabaseID() const
     return __shaderId;
 }
 
+void Shader::SetUniformInt(const GLchar * uniformName, const GLint nb)
+{
+    shaderDB[__shaderId]->SetUniformInt(uniformName, nb);
+}
+
 Shader GenerateShader(const GLchar * vertexPath, const GLchar * fragmentPath)
 {
     shaderDB.emplace_back(new Shader_Base(vertexPath, fragmentPath));
     return Shader(shaderDB.size() - 1);
 }
 
-void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb) const
+void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb)
 {
     shaderDB[__shaderId]->SetUniformFloat(uniformName, nb);
 }
 
-void Shader::SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs) const
+void Shader::SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs)
 {
     shaderDB[__shaderId]->SetUniformFloat(uniformName, nbs);
 }
 
-void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2) const
+void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2)
 {
     shaderDB[__shaderId]->SetUniformFloat(uniformName, nb1, nb2);
 }
 
-void Shader::SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs) const
+void Shader::SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs)
 {
     shaderDB[__shaderId]->SetUniformFloat(uniformName, nbs);
 }
 
-void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3) const
+void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3)
 {
     shaderDB[__shaderId]->SetUniformFloat(uniformName, nb1, nb2, nb3);
 }
 
-void Shader::SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs) const
+void Shader::SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs)
 {
     shaderDB[__shaderId]->SetUniformFloat(uniformName, nbs);
 }
 
-void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4) const
+void Shader::SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4)
 {
     shaderDB[__shaderId]->SetUniformFloat(uniformName, nb1, nb2, nb3, nb4);
+}
+
+void Shader::SetUniformMatrix4f(const GLchar * uniformName, const glm::mat4 & mat)
+{
+    shaderDB[__shaderId]->SetUniformMatrix4f(uniformName, mat);
 }

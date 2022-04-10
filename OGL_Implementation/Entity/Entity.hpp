@@ -13,6 +13,7 @@
 #include "OGL_Implementation\Mesh\Mesh.hpp"
 #include "OGL_Implementation\Shader\Shader.hpp"
 #include "OGL_Implementation\Texture.hpp"
+#include "OGL_Implementation\Quaternion.hpp"
 
 // GLM includes
 #include <glm\glm.hpp>
@@ -64,9 +65,9 @@ public:
     void SetPointShader(const Shader & shader);
     void SetWireframeShader(const Shader & shader);
     void SetFaceShader(const Shader & shader);
-    Shader GetPointShader() const;
-    Shader GetWireframeShader() const;
-    Shader GetFaceShader() const;
+    Shader & GetPointShader();
+    Shader & GetWireframeShader();
+    Shader & GetFaceShader();
 
     void SetMesh(const Mesh & mesh);
     void SetTexture(const Texture & texture);
@@ -77,15 +78,10 @@ public:
      * @brief Calculates Model Matrix.
      * @return Model Matrix
     */
-    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) const;
+    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false);
 
     // Entity_Skeleton abstract
     virtual glm::vec3 Get3DPosition() const;
-
-    void Rotate(const glm::vec3 & rotation);
-    void RotateX(const float rotation);
-    void RotateY(const float rotation);
-    void RotateZ(const float rotation);
 
 public:
     /**
@@ -97,9 +93,9 @@ public:
     */
     glm::vec3 scale;
     /**
-     * @brief Rotation vector (expressed with euler angles).
+     * @brief Quaternion
     */
-    glm::vec3 eulerAngles;
+    Quaternion quat;
 private:
     /**
      * @brief Mesh Identifier.

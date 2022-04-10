@@ -22,6 +22,12 @@ inline const Parent * Entity_Skeleton::GetParent() const
     return __parent ? dynamic_cast<const Parent *>(__parent) : nullptr;
 }
 
+template<Entity_Skeleton_Based Parent>
+inline Parent * Entity_Skeleton::GetParent()
+{
+    return __parent ? dynamic_cast<Parent *>(__parent) : nullptr;
+}
+
 template<Entity_Skeleton_Based Child>
 inline void Entity_Skeleton::AddChild(const Child * child)
 {

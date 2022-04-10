@@ -37,14 +37,17 @@ public:
     void AddGlobalUbo(const GLuint bindingPoint, const char * bindingPointName) const;
     GLuint GetShaderDatabaseID() const;
 
-    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb) const;
-    void SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs) const;
-    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2) const;
-    void SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs) const;
-    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3) const;
-    void SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs) const;
-    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4) const;
+    void SetUniformInt(const GLchar * uniformName, const GLint nb);
 
+    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb);
+    void SetUniformFloat(const GLchar * uniformName, const glm::vec2 & nbs);
+    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2);
+    void SetUniformFloat(const GLchar * uniformName, const glm::vec3 & nbs);
+    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3);
+    void SetUniformFloat(const GLchar * uniformName, const glm::vec4 & nbs);
+    void SetUniformFloat(const GLchar * uniformName, const GLfloat nb1, const GLfloat nb2, const GLfloat nb3, const GLfloat nb4);
+
+    void SetUniformMatrix4f(const GLchar * uniformName, const glm::mat4 & mat);
 
 public:
     GLuint __shaderId;

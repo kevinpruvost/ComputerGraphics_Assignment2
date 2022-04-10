@@ -28,7 +28,7 @@ Entity::Entity(const Mesh & mesh,
     , __shaderFace{ faceShader }
     , pos{ defaultPosition }
     , scale{ defaultScale }
-    , eulerAngles{ defaultEulerAngles }
+    , quat{ defaultEulerAngles }
 {
 }
 
@@ -62,17 +62,17 @@ void Entity::SetFaceShader(const Shader & shader)
     __shaderFace = shader;
 }
 
-Shader Entity::GetPointShader() const
+Shader & Entity::GetPointShader()
 {
     return __shaderPoint;
 }
 
-Shader Entity::GetWireframeShader() const
+Shader & Entity::GetWireframeShader()
 {
     return __shaderWireframe;
 }
 
-Shader Entity::GetFaceShader() const
+Shader & Entity::GetFaceShader()
 {
     return __shaderFace;
 }
@@ -94,7 +94,7 @@ const Texture & Entity::GetTexture() const
 
 const Mesh & Entity::GetMesh() const { return __mesh; }
 
-glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale) const
+glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale)
 {
     // Transformation Matrix
     glm::mat4 mat = {
@@ -104,8 +104,9 @@ glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale) const
         {pos.x, pos.y, pos.z, 1.0f}
     };
     // Rotation Matrix
+    // TODO: Quaternion system to be remade
     if (!ignoreRotation)
-        mat *= glm::toMat4(glm::quat(glm::radians(eulerAngles)));
+        mat *= glm::toMat4(quat);
     // Scaling Matrix
     if (!ignoreScale)
         mat = glm::scale(mat, scale);
@@ -118,28 +119,6 @@ glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale) const
 glm::vec3 Entity::Get3DPosition() const
 {
     return pos;
-}
-
-void Entity::Rotate(const glm::vec3 & rotation)
-{
-    RotateX(rotation.x);
-    RotateY(rotation.y);
-    RotateZ(rotation.z);
-}
-
-void Entity::RotateX(const float rotation)
-{
-    eulerAngles.x = std::fmod(eulerAngles.x + rotation, 360.0f - std::numeric_limits<float>::epsilon());
-}
-
-void Entity::RotateY(const float rotation)
-{
-    eulerAngles.y = std::fmod(eulerAngles.y + rotation, 360.0f - std::numeric_limits<float>::epsilon());
-}
-
-void Entity::RotateZ(const float rotation)
-{
-    eulerAngles.z = std::fmod(eulerAngles.z + rotation, 360.0f - std::numeric_limits<float>::epsilon());
 }
 
 void SetDefaultPointShader(const Shader & shader)

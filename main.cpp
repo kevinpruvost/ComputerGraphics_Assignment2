@@ -135,13 +135,13 @@ int main()
 		moon(sphereMesh), neptune(sphereMesh),
 		saturn(sphereMesh), earth(sphereMesh),
 		uranus(sphereMesh), venus(sphereMesh);
-	earth.RotateX(-90.0f);
-	jupiter.RotateX(-90.0f);
-	mars.RotateX(-90.0f);
-	moon.RotateX(-90.0f);
-	saturn.RotateX(-90.0f);
-	venus.RotateX(-90.0f);
-	neptune.RotateX(-90.0f);
+	earth.quat.RotateX(-90.0f);
+	jupiter.quat.RotateX(-90.0f);
+	mars.quat.RotateX(-90.0f);
+	moon.quat.RotateX(-90.0f);
+	saturn.quat.RotateX(-90.0f);
+	venus.quat.RotateX(-90.0f);
+	neptune.quat.RotateX(-90.0f);
 	sun.scale     = glm::vec3(50.0f);   // 1.3927 million km diameter
 	jupiter.scale = glm::vec3(25.0f); // 139820 km diameter
 	saturn.scale  = glm::vec3(24.0f); // 116460 km diameter
@@ -160,15 +160,13 @@ int main()
 		for (auto e : { &mercury, &venus, &earth, &mars, &jupiter, &saturn, &uranus, &neptune })
 		{
 			planetSpan += 30.0f + e->scale.x;
-			float x = direction * (planetSpan / 2.0f - std::fmod(rand(), planetSpan / 2.0f));
-			float z = -direction * (std::sqrt(planetSpan * planetSpan - x * x)); // So that length of vector on x,z = planetSpan
+			float x = -direction * (std::fmod(rand(), planetSpan));
+			float z = direction * (std::sqrt(planetSpan * planetSpan - x * x)); // So that length of vector on x,z = planetSpan
 			e->pos = glm::vec3(x, 0.0f, z);
 			direction *= -1.0f;
-			LOG_PRINT(stdout, "Planetspan: %.2f, X = %.2f, Z = %.2f\n", planetSpan, x, z);
 		}
 	}
 	moon.pos.x = earth.scale.x + 10.0f;
-	//moon.pos.z = earth.pos.z;
 	earth.SetTexture(earthTexture); jupiter.SetTexture(jupiterTexture); mars.SetTexture(marsTexture);
 	mercury.SetTexture(mercuryTexture); moon.SetTexture(moonTexture); neptune.SetTexture(neptuneTexture);
 	saturn.SetTexture(saturnTexture); sun.SetTexture(sunTexture); uranus.SetTexture(uranusTexture);
@@ -243,16 +241,16 @@ int main()
 		// Planets Rotation
 		{
 			// Around themselves
-			earth.RotateY(window.deltaTime() * 1.0f * rotationSpeed); // 1 earth day
-			sun.RotateY(window.deltaTime() * (1.0f / 35.0f) * rotationSpeed); // 35 earth days
-			moon.RotateY(window.deltaTime() * (1.0f / 27.3f) * rotationSpeed); // 27.3 earth days
-			mercury.RotateY(window.deltaTime() * (1.0f / 58.6f) * rotationSpeed); // 58.6 earth days
-			venus.RotateY(window.deltaTime() * (1.0f / 243.0f) * rotationSpeed); // 243 earth days
-			mars.RotateY(window.deltaTime() * (1.0f / 1.02f) * rotationSpeed); // 1.02 earth days
-			jupiter.RotateY(window.deltaTime() * (1.0f / 0.413f) * rotationSpeed); // 0.413 earth days
-			saturn.RotateY(window.deltaTime() * (1.0f / 0.44f) * rotationSpeed); // 0.44 earth days
-			uranus.RotateY(window.deltaTime() * (1.0f / 0.7183f) * rotationSpeed); // 0.7183 earth days
-			neptune.RotateY(window.deltaTime() * (1.0f / 0.67125f) * rotationSpeed); // 0.67125 earth days
+			earth.quat.RotateZ(window.deltaTime() * 1.0f * rotationSpeed); // 1 earth day
+			sun.quat.RotateY(window.deltaTime() * (1.0f / 35.0f) * rotationSpeed); // 35 earth days
+			moon.quat.RotateZ(window.deltaTime() * (1.0f / 27.3f) * rotationSpeed); // 27.3 earth days
+			mercury.quat.RotateY(window.deltaTime() * (1.0f / 58.6f) * rotationSpeed); // 58.6 earth days
+			venus.quat.RotateZ(window.deltaTime() * (1.0f / 243.0f) * rotationSpeed); // 243 earth days
+			mars.quat.RotateZ(window.deltaTime() * (1.0f / 1.02f) * rotationSpeed); // 1.02 earth days
+			jupiter.quat.RotateZ(window.deltaTime() * (1.0f / 0.413f) * rotationSpeed); // 0.413 earth days
+			saturn.quat.RotateZ(window.deltaTime() * (1.0f / 0.44f) * rotationSpeed); // 0.44 earth days
+			uranus.quat.RotateY(window.deltaTime() * (1.0f / 0.7183f) * rotationSpeed); // 0.7183 earth days
+			neptune.quat.RotateZ(window.deltaTime() * (1.0f / 0.67125f) * rotationSpeed); // 0.67125 earth days
 		}
 
 		// Model movement
@@ -277,6 +275,7 @@ int main()
 			{
 				t->font = fonts[0];
 			}
+			text.font = fonts[0];
 		}
 
 		if (cameraLock)
@@ -314,20 +313,20 @@ int main()
 			Rendering::RotateWireframeColor();
 
 		// display mode & activate shader
-		for (const auto & e : { earth, jupiter, mars, mercury, moon, neptune, saturn, sun, uranus, venus })
+		for (auto e : { &earth, &jupiter, &mars, &mercury, &moon, &neptune, &saturn, &sun, &uranus, &venus })
 		{
-			if (displayMode == 0) Rendering::DrawVertices(e);
-			if (displayMode & 1)  Rendering::DrawFaces(e);
-			if (displayMode & 2)  Rendering::DrawWireframe(e);
+			if (displayMode == 0) Rendering::DrawVertices(*e);
+			if (displayMode & 1)  Rendering::DrawFaces(*e);
+			if (displayMode & 2)  Rendering::DrawWireframe(*e);
 		}
 
 		// Drawing 2D Text
 		Rendering::DrawText(text);
 		
 		// Drawing 3D Text
-		for (const auto & t : { textEarth, textJupiter, textMars, textMercury, textMoon, textNeptune, textSaturn, textSun, textUranus, textVenus })
+		for (auto t : { &textEarth, &textJupiter, &textMars, &textMercury, &textMoon, &textNeptune, &textSaturn, &textSun, &textUranus, &textVenus })
 		{
-			Rendering::DrawText(t);
+			Rendering::DrawText(*t);
 		}
 
 

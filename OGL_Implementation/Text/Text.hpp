@@ -86,7 +86,7 @@ public:
      * @brief Calculates Model Matrix.
      * @return Model Matrix
     */
-    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) const;
+    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false);
 
     // Entity_Skeleton abstract
     virtual glm::vec3 Get3DPosition() const;
