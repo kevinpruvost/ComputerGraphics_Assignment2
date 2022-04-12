@@ -45,6 +45,7 @@ file (GLOB ASSIGNMENT_SOURCES
     OGL_Implementation/Mesh/*.cpp
     OGL_Implementation/Shader/*.cpp
     OGL_Implementation/Entity/*.cpp
+    OGL_Implementation/Light/*.cpp
     OGL_Implementation/Rendering/*.cpp
     OGL_Implementation/Text/*.cpp
 )
@@ -56,6 +57,7 @@ file (GLOB ASSIGNMENT_HEADERS
     OGL_Implementation/Shader/*.hpp
     OGL_Implementation/Entity/*.hpp
     OGL_Implementation/Entity/*.inl
+    OGL_Implementation/Light/*.hpp
     OGL_Implementation/Rendering/*.hpp
     OGL_Implementation/Text/*.hpp
 )

@@ -55,6 +55,11 @@ public:
      * @return has changed
     */
     bool windowDimensionsHasChanged() const;
+    /**
+     * @brief Returns if window is focused or not
+     * @return window focused 
+    */
+    bool GetWindowFocused() const;
 
 public:
     /**

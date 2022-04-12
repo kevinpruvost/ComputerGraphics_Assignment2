@@ -25,6 +25,9 @@ constexpr const char * faceShaderVertex      = "resources/Shaders/face.vert.glsl
 constexpr const char * faceShaderFrag        = "resources/Shaders/face.frag.glsl";
 constexpr const char * wireframeShaderVertex = "resources/Shaders/wireframe.vert.glsl";
 constexpr const char * wireframeShaderFrag   = "resources/Shaders/wireframe.frag.glsl";
+constexpr const char * lightShaderVertex     = "resources/Shaders/light.vert.glsl";
+constexpr const char * lightShaderFrag       = "resources/Shaders/light.frag.glsl";
+
 constexpr const char * text2DShaderVertex    = "resources/Shaders/text2D.vert.glsl";
 constexpr const char * text2DShaderFrag      = "resources/Shaders/text2D.frag.glsl";
 constexpr const char * text3DShaderVertex    = "resources/Shaders/text3D.vert.glsl";
@@ -54,4 +57,20 @@ constexpr const char * texture  = "resources/Models/rat.png";
 }; // !Constants::Paths::Models::Rat
 }; // !Constants::Paths::Models
 }; // !Constants::Paths
+
+namespace UBO // Uniform Buffer Objects
+{
+namespace Names
+{
+constexpr const char * cameraProps = "CameraProps";
+constexpr const char * lights      = "Lights";
+constexpr const char * projection  = "Projection";
+}; // !Constants::UBO::Names
+namespace Ids
+{
+constexpr const GLuint cameraProps = 0;
+constexpr const GLuint lights = 1;
+constexpr const GLuint projection = 2;
+};
+}; // !Constants::UBO
 }; // !Constants

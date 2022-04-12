@@ -48,6 +48,12 @@ GLuint Rendering::GetTextVBO() { return __textVBO; }
 void Rendering::Init()
 {
 	s_Rendering.reset(new Rendering());
+	LightRendering::Init();
+}
+
+void Rendering::Refresh()
+{
+	LightRendering::RefreshUbo();
 }
 
 void Rendering::DrawFaces(Entity & entity)

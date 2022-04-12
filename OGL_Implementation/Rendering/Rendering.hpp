@@ -10,6 +10,7 @@
 // Project includes
 #include "OGL_Implementation\Entity\Entity.hpp"
 #include "OGL_Implementation\Text\Text.hpp"
+#include "OGL_Implementation\Light\Light.hpp"
 
 /**
  * @brief Static class containing rendering utilities
@@ -31,6 +32,7 @@ public:
      * @brief To call to initialize Rendering
     */
     static void Init();
+    static void Refresh();
 
     // Entities
     static void DrawFaces(Entity & entity);

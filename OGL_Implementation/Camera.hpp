@@ -184,9 +184,8 @@ private:
     float __fov, __zNear, __zFar;
     int __wWidth, __wHeight;
     bool __hasMoved, __hasReshaped;
-    GLuint __uboProjView;
+    GLuint __uboCameraProps;
     GLuint __uboProjection;
-    GLuint __uboProjAndView;
     glm::mat4 __projection, __view;
 };
 

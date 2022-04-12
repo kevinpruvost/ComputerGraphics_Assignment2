@@ -38,7 +38,7 @@ bool GUI::DrawGUI()
         "Hello Prof/TA !\n"
         "Here are the controls:\n"
         "- Camera/Cursor Lock: L\n"
-        "- Camera Movement:\n"
+        "- Camera Movement (has to be unlocked):\n"
         "\t- Forward:  W\n"
         "\t- Backward: S\n"
         "\t- Left:     A\n"
@@ -50,6 +50,7 @@ bool GUI::DrawGUI()
         "- Object Rotation: Up/Down Arrows\n"
         "- Object View Mode Switch: C\n"
         "- Wireframe Color Change: P\n"
+        "- Change Font: F\n"
     );
     ImGui::End();
 

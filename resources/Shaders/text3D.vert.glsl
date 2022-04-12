@@ -7,9 +7,11 @@
 // input vertex attributes
 layout (location = 0) in vec4 vertex;
 
-layout (std140) uniform ViewAndProj
+layout (std140) uniform CameraProps
 {
-	mat4 view;
+    vec4 viewPos;
+    mat4 viewProj;
+    mat4 view;
 	mat4 projection;
 };
 uniform mat4 model;

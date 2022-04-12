@@ -9,6 +9,7 @@
 
 // Project includes
 #include "OGL_Implementation\DebugInfo\Log.hpp"
+#include "Constants.hpp"
 
 Camera * mainCamera = nullptr;
 
@@ -28,39 +29,27 @@ Camera::Camera(int windowWidth, int windowHeight,
     , __zFar{ 10000.0f }
     , __hasMoved{ true }
     , __hasReshaped{ true }
-    , __uboProjView{ 0 }
+    , __uboCameraProps{ 0 }
     , __uboProjection{ 0 }
-    , __uboProjAndView{ 0 }
     , __wWidth{ windowWidth }
     , __wHeight{ windowHeight }
 {
     updateCameraVectors();
     
     // Allocating UBO ViewProj
-    glGenBuffers(1, &__uboProjView);
+    glGenBuffers(1, &__uboCameraProps);
     glGenBuffers(1, &__uboProjection);
-    glGenBuffers(1, &__uboProjAndView);
 
 
-    glBindBuffer(GL_UNIFORM_BUFFER, __uboProjAndView);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, NULL, GL_DYNAMIC_DRAW);
-    glBindBufferRange(GL_UNIFORM_BUFFER, 2, __uboProjAndView, 0, sizeof(glm::mat4) * 2);
-
-
-    glBindBuffer(GL_UNIFORM_BUFFER, __uboProjView);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, __uboProjView, 0, sizeof(glm::mat4));
-
-    // Binds buffer to a specific binding point so that it'll be used at this exact place
-    // by shaders
+    glBindBuffer(GL_UNIFORM_BUFFER, __uboCameraProps);
+    constexpr const size_t uboCameraPropsSize = sizeof(glm::vec4) + sizeof(glm::mat4) * 3;
+    glBufferData(GL_UNIFORM_BUFFER, uboCameraPropsSize, NULL, GL_DYNAMIC_DRAW);
+    glBindBufferRange(GL_UNIFORM_BUFFER, Constants::UBO::Ids::cameraProps, __uboCameraProps, 0, uboCameraPropsSize);
 
     glBindBuffer(GL_UNIFORM_BUFFER, __uboProjection);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-    // Binds buffer to a specific binding point so that it'll be used at this exact place
-    // by shaders
-    glBindBufferRange(GL_UNIFORM_BUFFER, 1, __uboProjection, 0, sizeof(glm::mat4));
+    constexpr const size_t uboProjectionSize = sizeof(glm::mat4);
+    glBufferData(GL_UNIFORM_BUFFER, uboProjectionSize, NULL, GL_DYNAMIC_DRAW);
+    glBindBufferRange(GL_UNIFORM_BUFFER, Constants::UBO::Ids::projection, __uboProjection, 0, uboProjectionSize);
 }
 
 Camera::Camera(int windowWidth, int windowHeight, glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
@@ -70,8 +59,7 @@ Camera::Camera(int windowWidth, int windowHeight, glm::vec3 position, glm::vec3 
 
 Camera::~Camera()
 {
-    glDeleteBuffers(1, &__uboProjView);
-    glDeleteBuffers(1, &__uboProjAndView);
+    glDeleteBuffers(1, &__uboCameraProps);
     glDeleteBuffers(1, &__uboProjection);
 
     if (mainCamera == this) mainCamera = nullptr;
@@ -95,6 +83,9 @@ GLuint Camera::GetProjViewMatrixUbo()
         {
             __view = glm::lookAt(this->Position, this->Position + this->Front, this->Up);
             __hasMoved = false;
+            // Reassign position
+            glBindBuffer(GL_UNIFORM_BUFFER, __uboCameraProps);
+            glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec4), glm::value_ptr(Position));
         }
         if (__hasReshaped)
         {
@@ -112,17 +103,16 @@ GLuint Camera::GetProjViewMatrixUbo()
             glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection2D));
         }
         // Reassign view & proj matrix
-        glBindBuffer(GL_UNIFORM_BUFFER, __uboProjAndView);
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(__view));
-        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(__projection));
+        glBindBuffer(GL_UNIFORM_BUFFER, __uboCameraProps);
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec4) + 1 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(__view));
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec4) + 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(__projection));
 
         // Reassign viewProj matrix
-        glBindBuffer(GL_UNIFORM_BUFFER, __uboProjView);
         const glm::mat4 viewProj = __projection * __view;
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewProj));
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec4), sizeof(glm::mat4), glm::value_ptr(viewProj));
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
-    return __uboProjView;
+    return __uboCameraProps;
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)

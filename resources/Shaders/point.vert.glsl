@@ -8,9 +8,12 @@
 layout (location = 0) in vec3 position;
 
 uniform mat4 model;
-layout (std140) uniform ViewProj
+layout (std140) uniform CameraProps
 {
-	mat4 viewProj;
+    vec4 viewPos;
+    mat4 viewProj;
+    mat4 view;
+	mat4 projection;
 };
 
 

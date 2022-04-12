@@ -35,6 +35,7 @@
 #include "OGL_Implementation\Texture.hpp"
 #include "OGL_Implementation\Rendering\Rendering.hpp"
 #include "OGL_Implementation\Text\Text.hpp"
+#include "OGL_Implementation\Light\Light.hpp"
 
 // Constants
 #include "Constants.hpp"
@@ -59,6 +60,7 @@ void LoadShadersAndFonts()
 	fonts.insert(fonts.begin(), { font1, font2, font3 });
 
 	// Build and compile our shader program
+	Shader lightShader = GenerateShader(Constants::Paths::lightShaderVertex, Constants::Paths::lightShaderFrag);
 	Shader pointShader = GenerateShader(Constants::Paths::pointShaderVertex, Constants::Paths::pointShaderFrag);
 	Shader faceShader = GenerateShader(Constants::Paths::faceShaderVertex, Constants::Paths::faceShaderFrag);
 	Shader wireframeShader = GenerateShader(Constants::Paths::wireframeShaderVertex, Constants::Paths::wireframeShaderFrag);
@@ -71,12 +73,16 @@ void LoadShadersAndFonts()
 	SetDefaultWireframeShader(wireframeShader);
 	SetDefault2DTextShader(text2DShader);
 	SetDefault3DTextShader(text3DShader);
+	SetDefaultLightShader(lightShader);
 
-	pointShader.AddGlobalUbo(0, "ViewProj");
-	faceShader.AddGlobalUbo(0, "ViewProj");
-	wireframeShader.AddGlobalUbo(0, "ViewProj");
-	text2DShader.AddGlobalUbo(1, "Projection");
-	text3DShader.AddGlobalUbo(2, "ViewAndProj");
+	pointShader.AddGlobalUbo(Constants::UBO::Ids::cameraProps, Constants::UBO::Names::cameraProps);
+	faceShader.AddGlobalUbo(Constants::UBO::Ids::cameraProps, Constants::UBO::Names::cameraProps);
+	wireframeShader.AddGlobalUbo(Constants::UBO::Ids::cameraProps, Constants::UBO::Names::cameraProps);
+
+	faceShader.AddGlobalUbo(Constants::UBO::Ids::lights, Constants::UBO::Names::lights);
+
+	text2DShader.AddGlobalUbo(Constants::UBO::Ids::projection, Constants::UBO::Names::projection);
+	text3DShader.AddGlobalUbo(Constants::UBO::Ids::cameraProps, Constants::UBO::Names::cameraProps);
 }
 
 // The MAIN function, from here we start the application and run the game loop
@@ -130,11 +136,17 @@ int main()
 	camera.MovementSpeed *= 50.0f;
 	mainCamera = &camera;
 
-	Entity sun(sphereMesh), jupiter(sphereMesh),
+	Shader lightShader(0);
+	PointLight sun(sphereMesh);
+	sun.ChangeBrightnessSettings(0.5f, 0.0002f, 0.000008f);
+	sun.ChangeSpecular(glm::vec3(0.0f));
+	sun.ChangeAmbient(glm::vec3(0.1f));
+	Entity jupiter(sphereMesh),
 		mars(sphereMesh), mercury(sphereMesh),
 		moon(sphereMesh), neptune(sphereMesh),
 		saturn(sphereMesh), earth(sphereMesh),
 		uranus(sphereMesh), venus(sphereMesh);
+	sun.SetFaceShader(lightShader);
 	earth.quat.RotateX(-90.0f);
 	jupiter.quat.RotateX(-90.0f);
 	mars.quat.RotateX(-90.0f);
@@ -204,16 +216,29 @@ int main()
 	GUI gui(window.window);
 	// Creating Second Window
 	gui.AddCallback([&]() {
+		const float width = 400.0f;
+		const float height = 400.0f;
+		ImGui::SetNextWindowSize({ width, height }, ImGuiCond_::ImGuiCond_Always);
 		ImGui::SetNextWindowPos(
-			{ImGui::GetIO().DisplaySize.x - 20.0f - 300.0f, 20.0f},
+			{ImGui::GetIO().DisplaySize.x - 20.0f - width, 20.0f},
 			ImGuiCond_::ImGuiCond_Always);
-		ImGui::SetNextWindowSize({ 300.0f, 150.0f }, ImGuiCond_::ImGuiCond_Always);
 		ImGui::Begin("Object Properties:");
 
 		ImGui::Text(std::format("FPS: {}", GetFpsCount(window.deltaTime(), 0.5f)).c_str());
 		ImGui::SliderFloat("Planet Rotation Speed", &rotationSpeed, 0.0f, 1000.0f, "%.1f");
 
 		ImGui::ColorEdit4("Title color", glm::value_ptr(text.color), ImGuiColorEditFlags_::ImGuiColorEditFlags_NoInputs);
+
+		ImGui::LabelText("<<", "Sun Properties:");
+
+		ImGui::SliderFloat("Constant", &sun.__constant, 0.0f, 1.0f);
+		ImGui::SliderFloat("Linear", &sun.__linear, 0.0f, 0.001f, "%.8f");
+		ImGui::SliderFloat("Quadratic", &sun.__quadratic, 0.0f, 0.0001f, "%.10f");
+
+		ImGui::SliderFloat3("Ambient", glm::value_ptr(sun.__ambient), 0.0f, 1.0f);
+		ImGui::SliderFloat3("Diffuse", glm::value_ptr(sun.__diffuse), 0.0f, 1.0f);
+		ImGui::SliderFloat3("Specular", glm::value_ptr(sun.__specular), 0.0f, 1.0f);
+
 
 //		ImGui::BeginChildFrame(5, { 300.0f, 50.0f });
 		if (ImGui::Button("Activate the Funny", { 300.0f, 50.0 }))
@@ -312,8 +337,10 @@ int main()
 		if (window.key(GLFW_KEY_P) == InputKey::JustPressed)
 			Rendering::RotateWireframeColor();
 
+		Rendering::Refresh();
+
 		// display mode & activate shader
-		for (auto e : { &earth, &jupiter, &mars, &mercury, &moon, &neptune, &saturn, &sun, &uranus, &venus })
+		for (auto e : { &earth, &jupiter, &mars, &mercury, &moon, &neptune, &saturn, dynamic_cast<Entity *>(&sun), &uranus, &venus })
 		{
 			if (displayMode == 0) Rendering::DrawVertices(*e);
 			if (displayMode & 1)  Rendering::DrawFaces(*e);
@@ -328,7 +355,6 @@ int main()
 		{
 			Rendering::DrawText(*t);
 		}
-
 
 		// Drawing ImGui GUI
 		if (!gui.DrawGUI()) return false;

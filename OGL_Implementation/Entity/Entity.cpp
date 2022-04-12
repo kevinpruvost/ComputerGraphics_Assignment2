@@ -104,7 +104,6 @@ glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale)
         {pos.x, pos.y, pos.z, 1.0f}
     };
     // Rotation Matrix
-    // TODO: Quaternion system to be remade
     if (!ignoreRotation)
         mat *= glm::toMat4(quat);
     // Scaling Matrix
@@ -134,4 +133,19 @@ void SetDefaultWireframeShader(const Shader & shader)
 void SetDefaultFaceShader(const Shader & shader)
 {
     defaultFaceShader.reset(new Shader(shader.GetShaderDatabaseID()));
+}
+
+const Shader & GetDefaultPointShader()
+{
+    return *defaultPointShader;
+}
+
+const Shader & GetDefaultWireframeShader()
+{
+    return *defaultWireframeShader;
+}
+
+const Shader & GetDefaultFaceShader()
+{
+    return *defaultFaceShader;
 }

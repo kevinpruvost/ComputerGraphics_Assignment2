@@ -8,12 +8,14 @@
 #include "Window.hpp"
 
 // Project includes
+#include "OGL_Implementation\DebugInfo\Log.hpp"
 #include <SOIL.h>
 
 // Window dimensions
 static int WIDTH = 1000;
 static int HEIGHT = 750;
 static bool windowDimensionsChanged_ = false;
+static bool windowIsFocused_ = true;
 
 Window::Window()
 	: window { nullptr }
@@ -42,6 +44,7 @@ bool Window::Init(const char * windowName, const char * iconPath)
 	if ((window = glfwCreateWindow(WIDTH, HEIGHT, windowName, nullptr, nullptr)) == nullptr)
 		return false;
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1); // Disables V-Sync
 
 	// Sets icon if iconPath != nullptr
 	if (iconPath)
@@ -68,6 +71,10 @@ bool Window::Init(const char * windowName, const char * iconPath)
 	glfwSetKeyCallback(window, InputKeyCallback);
 	glfwSetCursorPosCallback(window, InputMouseCallback);
 	glfwSetScrollCallback(window, InputScrollCallback);
+	glfwSetWindowFocusCallback(window, [](GLFWwindow * window, int focusState) {
+		windowIsFocused_ = static_cast<bool>(focusState);
+		LOG_PRINT(stdout, "Window is %s focused.\n", windowIsFocused_ ? "" : "not");
+	});
 
 	// Initialize GLAD to setup the OpenGL Function pointers
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -80,6 +87,7 @@ bool Window::Init(const char * windowName, const char * iconPath)
 	glEnable(GL_DEPTH_TEST); // Depth
 	glEnable(GL_CULL_FACE); // Face Culling
 	glEnable(GL_BLEND); // Blending
+	glEnable(GL_LIGHTING);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Blending options
 	return true;
 }
@@ -87,6 +95,7 @@ bool Window::Init(const char * windowName, const char * iconPath)
 bool Window::Loop(const std::function<bool()> & lambda)
 {
 	GLfloat lastFrame = 0.0f;      // Time of last frame
+
 	// Game loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -126,4 +135,9 @@ int Window::windowHeight() const
 bool Window::windowDimensionsHasChanged() const
 {
 	return windowDimensionsChanged_;
+}
+
+bool Window::GetWindowFocused() const
+{
+	return windowIsFocused_;
 }

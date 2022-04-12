@@ -13,6 +13,7 @@
 // C++ includes
 #include <cstdint>
 #include <vector>
+#include <unordered_map>
 
 /**
  * @brief Contains Shader Id and methods related

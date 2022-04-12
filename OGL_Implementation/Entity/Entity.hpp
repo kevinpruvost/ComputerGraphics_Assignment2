@@ -36,6 +36,9 @@ public:
     /**
      * @brief Default Constructor
      * @param mesh 
+     * @param pointShader 
+     * @param wireframeShader 
+     * @param faceShader 
      * @param defaultPosition 
      * @param defaultEulerAngles 
      * @param defaultScale 
@@ -111,3 +114,6 @@ private:
 void SetDefaultPointShader(const Shader & shader);
 void SetDefaultWireframeShader(const Shader & shader);
 void SetDefaultFaceShader(const Shader & shader);
+const Shader & GetDefaultPointShader();
+const Shader & GetDefaultWireframeShader();
+const Shader & GetDefaultFaceShader();
