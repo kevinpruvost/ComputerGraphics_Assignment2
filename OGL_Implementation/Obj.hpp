@@ -17,7 +17,7 @@
 // Glad includes
 #include <glad/glad.h>
 
-#include "Mesh/Geometry.hpp"
+#include "Mesh/Mesh_Geometry.hpp"
 
 /**
  * @brief Manages parsing and loading of .obj files.

@@ -30,8 +30,9 @@ protected:
 public:
     virtual ~Entity_Skeleton();
 
-    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) = 0;
-    virtual glm::vec3 Get3DPosition() const = 0;
+    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) const = 0;
+    virtual glm::vec3 GetLocalPosition() const = 0;
+    virtual glm::vec3 GetWorldPosition() const = 0;
 
 public:
     template<Entity_Skeleton_Based E>

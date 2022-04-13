@@ -55,7 +55,7 @@ try : Text3D(*defaultFont, *defaultText3DShader, _str, xyz, _scale, _color)
     throw std::runtime_error("Text3D Default Font/Shader");
 }
 
-glm::mat4 Text3D::GetModelMatrix(bool ignoreRotation, bool ignoreScale)
+glm::mat4 Text3D::GetModelMatrix(bool ignoreRotation, bool ignoreScale) const
 {
     // Transformation Matrix
     glm::mat4 mat = {
@@ -72,8 +72,15 @@ glm::mat4 Text3D::GetModelMatrix(bool ignoreRotation, bool ignoreScale)
     return mat;
 }
 
-glm::vec3 Text3D::Get3DPosition() const
+glm::vec3 Text3D::GetLocalPosition() const
 {
+    return pos;
+}
+
+glm::vec3 Text3D::GetWorldPosition() const
+{
+    if (HasParent())
+        return pos + GetParent()->GetWorldPosition();
     return pos;
 }
 

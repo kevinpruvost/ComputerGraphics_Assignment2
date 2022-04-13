@@ -94,7 +94,7 @@ const Texture & Entity::GetTexture() const
 
 const Mesh & Entity::GetMesh() const { return __mesh; }
 
-glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale)
+glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale) const
 {
     // Transformation Matrix
     glm::mat4 mat = {
@@ -115,8 +115,19 @@ glm::mat4 Entity::GetModelMatrix(bool ignoreRotation, bool ignoreScale)
     return mat;
 }
 
-glm::vec3 Entity::Get3DPosition() const
+glm::vec3 Entity::GetLocalPosition() const
 {
+    return pos;
+}
+
+glm::vec3 Entity::GetWorldPosition() const
+{
+    if (HasParent())
+    {
+        const glm::mat4 modelMatrix = GetModelMatrix();
+        const glm::vec3 position{modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]};
+        return position;
+    }
     return pos;
 }
 

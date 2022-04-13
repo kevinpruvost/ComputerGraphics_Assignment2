@@ -11,6 +11,9 @@
 #include "OGL_Implementation\DebugInfo\Log.hpp"
 #include "Constants.hpp"
 
+// GLM includes
+#include <glm\gtx\vector_angle.hpp>
+
 Camera * mainCamera = nullptr;
 
 Camera::Camera(int windowWidth, int windowHeight,
@@ -211,6 +214,17 @@ void Camera::SetWindowDimensions(int windowWidth, int windowHeight)
 glm::vec2 Camera::GetWindowDimensions() const
 {
     return {__wWidth, __wHeight};
+}
+
+void Camera::LookAt(const glm::vec3 & objPosition)
+{
+    __hasMoved = true;
+    const glm::mat4 view = glm::lookAt(Position, objPosition, WorldUp);
+    const glm::mat4 inverted = glm::inverse(view);
+    const glm::vec3 direction = -glm::vec3(inverted[2]);
+    Yaw = glm::degrees(glm::atan(direction.z, direction.x));
+    Pitch = glm::degrees(glm::asin(direction.y));
+    updateCameraVectors();
 }
 
 void Camera::updateCameraVectors()

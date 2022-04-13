@@ -1,5 +1,5 @@
 /*****************************************************************//**
- * \file   Geometry.hpp
+ * \file   Mesh_Geometry.hpp
  * \brief  Geometry related functions & classes
  * 
  * \author Kevin Pruvost (pruvostkevin0@gmail.com)

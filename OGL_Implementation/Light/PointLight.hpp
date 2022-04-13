@@ -92,7 +92,7 @@ public:
 
     static constexpr const size_t maxPointLightsCount = 128;
 
-    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) override;
+    virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) const override;
 
     PointLight_Shader GetShaderInfo() const;
 

@@ -152,6 +152,12 @@ public:
     */
     glm::vec2 GetWindowDimensions() const;
 
+    /**
+     * @brief Makes the camera look at a certain position
+     * @param objPosition 
+    */
+    void LookAt(const glm::vec3 & objPosition);
+
 private:
     /**
      * @brief Calculates the front vector from the Camera's (updated) Eular Angles

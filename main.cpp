@@ -216,8 +216,10 @@ int main()
 	GUI gui(window.window);
 	// Creating Second Window
 	bool enableGui = true;
+	int planetFocus = 0;
+	const std::vector<Entity *> planetsVector = { dynamic_cast<Entity *>(&sun), &mercury, &venus, &earth, &moon, &mars, &jupiter, &saturn, &uranus, &neptune };
 	gui.AddCallback([&]() {
-		const float width = 300.0f;
+		const float width = 320.0f;
 		const float height = 400.0f;
 		ImGui::SetNextWindowSize({ width, height }, ImGuiCond_::ImGuiCond_Always);
 		ImGui::SetNextWindowPos(
@@ -241,15 +243,19 @@ int main()
 		ImGui::SliderFloat3("Diffuse", glm::value_ptr(sun.__diffuse), 0.0f, 1.0f);
 		ImGui::SliderFloat3("Specular", glm::value_ptr(sun.__specular), 0.0f, 1.0f);
 
-
-//		ImGui::BeginChildFrame(5, { 300.0f, 50.0f });
+		const char * const displayModeItems[4] = {"Vertices", "Faces", "Wireframes", "Faces + Wireframes"};
+		const char * const focusModeItems[11] = { "No Focus", "Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"};
+		ImGui::Combo("Display Mode", &displayMode, displayModeItems, IM_ARRAYSIZE(displayModeItems));
+		ImGui::Combo("Planet Focus", &planetFocus, focusModeItems, IM_ARRAYSIZE(focusModeItems));
+		if (planetFocus > 0)
+		{
+			ImGui::LabelText("Camera Position", "X: %.2f, Y: %.2f, Z:%.2f", camera.Position.x, camera.Position.y, camera.Position.z);
+			ImGui::LabelText("Focus Position", "X: %.2f, Y: %.2f, Z:%.2f", planetsVector[planetFocus - 1]->pos.x, planetsVector[planetFocus - 1]->pos.y, planetsVector[planetFocus - 1]->pos.z);
+		}
 		if (ImGui::Button("Activate the Funny", { 300.0f, 50.0 }))
 		{
 
 		}
-		const char * const displayModeItems[4] = {"Vertices", "Faces", "Wireframes", "Faces + Wireframes"};
-		ImGui::Combo("Display Mode", &displayMode, displayModeItems, IM_ARRAYSIZE(displayModeItems));
-//		ImGui::EndChildFrame();
 
 		ImGui::End();
 		return true;
@@ -307,6 +313,7 @@ int main()
 			text.font = fonts[0];
 		}
 
+		// Enable/Disable GUI
 		if (window.key(GLFW_KEY_T) == InputKey::JustPressed) enableGui = !enableGui;
 
 		if (cameraLock)
@@ -332,6 +339,12 @@ int main()
 				camera.ProcessMouseScroll(window.mouseWheelOffset().y);
 		}
 
+		// Planet Focus
+		if (planetFocus > 0)
+		{
+			camera.LookAt(planetsVector[planetFocus - 1]->GetWorldPosition());
+		}
+
 		// Window Dimensions changed
 		if (window.windowDimensionsHasChanged())
 			camera.SetWindowDimensions(window.windowWidth(), window.windowHeight());
@@ -355,14 +368,14 @@ int main()
 
 		if (enableGui)
 		{
-			// Drawing 2D Text
-			Rendering::DrawText(text);
-
 			// Drawing 3D Text
 			for (auto t : { &textEarth, &textJupiter, &textMars, &textMercury, &textMoon, &textNeptune, &textSaturn, &textSun, &textUranus, &textVenus })
 			{
 				Rendering::DrawText(*t);
 			}
+
+			// Drawing 2D Text
+			Rendering::DrawText(text);
 
 			// Drawing ImGui GUI
 			if (!gui.DrawGUI()) return false;

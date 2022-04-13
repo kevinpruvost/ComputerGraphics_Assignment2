@@ -9,7 +9,7 @@
 
 // Project includes
 #include "Mesh_Base.hpp"
-#include "Geometry.hpp"
+#include "Mesh_Geometry.hpp"
 
 // C++ includes
 #include <vector>

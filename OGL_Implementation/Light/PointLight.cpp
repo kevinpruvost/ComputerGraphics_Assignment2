@@ -36,7 +36,7 @@ PointLight::~PointLight()
     DeletePointLight();
 }
 
-glm::mat4 PointLight::GetModelMatrix(bool ignoreRotation, bool ignoreScale)
+glm::mat4 PointLight::GetModelMatrix(bool ignoreRotation, bool ignoreScale) const
 {
     // Transformation Matrix
     glm::mat4 mat = {
