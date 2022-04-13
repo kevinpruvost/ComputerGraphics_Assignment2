@@ -138,9 +138,14 @@ int main()
 
 	Shader lightShader(0);
 	PointLight sun(sphereMesh);
+	PointLight sun2(sphereMesh);
 	sun.ChangeBrightnessSettings(0.5f, 0.0002f, 0.000008f);
 	sun.ChangeSpecular(glm::vec3(0.0f));
 	sun.ChangeAmbient(glm::vec3(0.1f));
+	sun2.ChangeBrightnessSettings(0.5f, 0.0002f, 0.000008f);
+	sun2.ChangeSpecular(glm::vec3(0.0f));
+	sun2.ChangeAmbient(glm::vec3(0.1f));
+	sun2.pos = glm::vec3(300.0f, 10.0f, 300.0f);
 	Entity jupiter(sphereMesh),
 		mars(sphereMesh), mercury(sphereMesh),
 		moon(sphereMesh), neptune(sphereMesh),
@@ -164,6 +169,7 @@ int main()
 	mars.scale    = glm::vec3(8.0f);  // 6779 km diameter
 	mercury.scale = glm::vec3(5.0f);  // 4879 km diameter
 	moon.scale    = glm::vec3(3.0f);  // 3474 km diameter
+	sun2.scale = sun.scale;
 
 	{
 		float planetSpan = sun.scale.x;
@@ -182,7 +188,7 @@ int main()
 	earth.SetTexture(earthTexture); jupiter.SetTexture(jupiterTexture); mars.SetTexture(marsTexture);
 	mercury.SetTexture(mercuryTexture); moon.SetTexture(moonTexture); neptune.SetTexture(neptuneTexture);
 	saturn.SetTexture(saturnTexture); sun.SetTexture(sunTexture); uranus.SetTexture(uranusTexture);
-	venus.SetTexture(venusTexture);
+	venus.SetTexture(venusTexture); sun2.SetTexture(sunTexture);
 
 	const float textScale = 25.0f;
 	const float textDistance = 1.5f;
@@ -215,6 +221,7 @@ int main()
 	// GUI
 	GUI gui(window.window);
 	// Creating Second Window
+	bool enableGui = true;
 	gui.AddCallback([&]() {
 		const float width = 400.0f;
 		const float height = 400.0f;
@@ -245,6 +252,7 @@ int main()
 		{
 
 		}
+		ImGui::Checkbox("Enable/Disable GUI (Press T)", &enableGui);
 //		ImGui::EndChildFrame();
 
 		ImGui::End();
@@ -303,6 +311,8 @@ int main()
 			text.font = fonts[0];
 		}
 
+		if (window.key(GLFW_KEY_T) == InputKey::JustPressed) enableGui = !enableGui;
+
 		if (cameraLock)
 		{
 			// Camera movement
@@ -340,24 +350,27 @@ int main()
 		Rendering::Refresh();
 
 		// display mode & activate shader
-		for (auto e : { &earth, &jupiter, &mars, &mercury, &moon, &neptune, &saturn, dynamic_cast<Entity *>(&sun), &uranus, &venus })
+		for (auto e : { &earth, &jupiter, &mars, &mercury, &moon, &neptune, &saturn, dynamic_cast<Entity *>(&sun), dynamic_cast<Entity *>(&sun2), &uranus, &venus })
 		{
 			if (displayMode == 0) Rendering::DrawVertices(*e);
 			if (displayMode & 1)  Rendering::DrawFaces(*e);
 			if (displayMode & 2)  Rendering::DrawWireframe(*e);
 		}
 
-		// Drawing 2D Text
-		Rendering::DrawText(text);
-		
-		// Drawing 3D Text
-		for (auto t : { &textEarth, &textJupiter, &textMars, &textMercury, &textMoon, &textNeptune, &textSaturn, &textSun, &textUranus, &textVenus })
+		if (enableGui)
 		{
-			Rendering::DrawText(*t);
-		}
+			// Drawing 2D Text
+			Rendering::DrawText(text);
 
-		// Drawing ImGui GUI
-		if (!gui.DrawGUI()) return false;
+			// Drawing 3D Text
+			for (auto t : { &textEarth, &textJupiter, &textMars, &textMercury, &textMoon, &textNeptune, &textSaturn, &textSun, &textUranus, &textVenus })
+			{
+				Rendering::DrawText(*t);
+			}
+
+			// Drawing ImGui GUI
+			if (!gui.DrawGUI()) return false;
+		}
 
 		return true;
 	});

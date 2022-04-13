@@ -18,10 +18,10 @@ LightRendering::LightRendering()
     // Allocating UBO ViewProj
     glGenBuffers(1, &__uboLights);
 
-    constexpr const size_t LightsSize = sizeof(PointLight_Shader) * 1;
+    constexpr const size_t LightsSize = sizeof(PointLight_Shader) * PointLight::maxPointLightsCount
 //      + sizeof(DirectionLight_Shader)
 //      + sizeof(SpotLight_Shader)
-//      + sizeof(int);
+      + sizeof(int);
     glBindBuffer(GL_UNIFORM_BUFFER, __uboLights);
     glBufferData(GL_UNIFORM_BUFFER, LightsSize, NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -53,21 +53,14 @@ void LightRendering::RefreshUbo()
 
     glBindBuffer(GL_UNIFORM_BUFFER, s_lightRendering->GetUboLights());
 
-//    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(PointLight_Shader),
-//        sizeof(int), &pointLightsCount);
     for (size_t i = 0; i < pointLightsCount; ++i)
     {
 //        if (pointLights[i]->HasChanged())
 //        {
         auto shaderInfo = pointLights[i]->GetShaderInfo();
         glBufferSubData(GL_UNIFORM_BUFFER, i * sizeof(PointLight_Shader), sizeof(PointLight_Shader), &shaderInfo);
-        //glBufferSubData(GL_UNIFORM_BUFFER, i * 80, sizeof(glm::vec3), &shaderInfo.position);
-        //glBufferSubData(GL_UNIFORM_BUFFER, i * 80 + sizeof(float), sizeof(float), &shaderInfo.constant);
-        //glBufferSubData(GL_UNIFORM_BUFFER, i * 80 + sizeof(float) * 2, sizeof(float), &shaderInfo.linear);
-        //glBufferSubData(GL_UNIFORM_BUFFER, i * 80 + sizeof(float) * 3, sizeof(float), &shaderInfo.quadratic);
-        //glBufferSubData(GL_UNIFORM_BUFFER, i * 80 + 16, sizeof(glm::vec3), &shaderInfo.ambient);
-        //glBufferSubData(GL_UNIFORM_BUFFER, i * 80 + 16 + 16, sizeof(glm::vec3), &shaderInfo.diffuse);
-        //glBufferSubData(GL_UNIFORM_BUFFER, i * 80 + 16 + 16 + 16, sizeof(glm::vec3), &shaderInfo.specular);
 //        }
     }
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(PointLight_Shader) * PointLight::maxPointLightsCount,
+        sizeof(int), &pointLightsCount);
 }

@@ -15,7 +15,7 @@ struct Material
     float shininess;
 }; 
 
-struct PointLight
+struct PointLight // 64 bytes
 {
 	vec3 position;
     float constant;
@@ -27,6 +27,7 @@ struct PointLight
     float quadratic; 
 
     vec3 specular;
+    float pad0; // Padding
 };
 
 struct DirectionLight
@@ -54,14 +55,14 @@ struct SpotLight
     vec3 specular;       
 };
 
-#define NR_POINT_LIGHTS 1
+#define NR_POINT_LIGHTS 128
 
 layout (std140) uniform Lights
 {
 	PointLight pointLights[NR_POINT_LIGHTS];
 //    DirectionLight directionLight;
 //    SpotLight spotLight;
-//    int pointLightsCount;
+    int pointLightsCount;
 };
 
 layout (std140) uniform CameraProps
@@ -87,9 +88,8 @@ void main()
     vec3 viewDir = normalize(viewPos.xyz - FragPos);
     
     vec3 result = vec3(0.0);
-    for(int i = 0; i < 1; i++)
+    for(int i = 0; i < pointLightsCount; i++)
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
-    result = CalcPointLight(pointLights[0], norm, FragPos, viewDir);
     color = vec4(result, 1.0);
 //	color = texture(_texture, TexCoords);
 }

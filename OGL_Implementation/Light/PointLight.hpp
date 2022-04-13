@@ -21,7 +21,7 @@ struct PointLight_Shader
     glm::vec3 diffuse; // 48
     float quadratic; // 24
 
-    glm::vec3 specular; // 64
+    glm::vec3 alignas(16) specular; // 64
 };
 
 /**
@@ -89,6 +89,8 @@ public:
         const glm::vec3 & diffuse = glm::vec3(0.8f),
         const glm::vec3 & specular = glm::vec3(1.0f));
     ~PointLight();
+
+    static constexpr const size_t maxPointLightsCount = 128;
 
     virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) override;
 

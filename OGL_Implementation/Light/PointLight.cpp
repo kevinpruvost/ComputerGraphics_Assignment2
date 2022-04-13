@@ -8,7 +8,7 @@
 
 static std::unique_ptr<Shader> defaultLightShader(nullptr);
 
-static std::array<PointLight *, 128> pointLights = { nullptr };
+static std::array<PointLight *, PointLight::maxPointLightsCount> pointLights = { nullptr };
 static size_t maxPos = 0;
 
 PointLight::PointLight(const Mesh & mesh, const Shader & pointShader, const Shader & wireframeShader, const Shader & lightShader, const glm::vec3 & defaultPosition, const glm::vec3 & defaultEulerAngles, const glm::vec3 & defaultScale,
@@ -94,6 +94,7 @@ const std::array<PointLight *, 128> & PointLight::GetAllPointLights()
 
 void PointLight::InsertPointLight()
 {
+    if (maxPos >= PointLight::maxPointLightsCount) throw std::runtime_error("Too much PointLight instances.");
     pointLights[maxPos++] = this;
 }
 
