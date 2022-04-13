@@ -26,7 +26,7 @@ PointLight::PointLight(const Mesh & mesh, const Shader & pointShader, const Shad
 
 PointLight::PointLight(const Mesh & mesh, const glm::vec3 & defaultPosition, const glm::vec3 & defaultEulerAngles, const glm::vec3 & defaultScale,
     const float constant, const float linear, const float quadratic, const glm::vec3 & ambient, const glm::vec3 & diffuse, const glm::vec3 & specular)
-    : PointLight(mesh, GetDefaultPointShader(), GetWireframeShader(), GetDefaultLightShader(), defaultPosition, defaultEulerAngles, defaultScale,
+    : PointLight(mesh, GetDefaultPointShader(), GetDefaultWireframeShader(), GetDefaultLightShader(), defaultPosition, defaultEulerAngles, defaultScale,
         constant, linear, quadratic, ambient, diffuse, specular)
 {
 }

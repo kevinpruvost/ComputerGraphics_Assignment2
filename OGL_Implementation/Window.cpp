@@ -12,8 +12,8 @@
 #include <SOIL.h>
 
 // Window dimensions
-static int WIDTH = 1000;
-static int HEIGHT = 750;
+static int WIDTH = 1200;
+static int HEIGHT = 800;
 static bool windowDimensionsChanged_ = false;
 static bool windowIsFocused_ = true;
 

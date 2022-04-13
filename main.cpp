@@ -41,7 +41,7 @@
 #include "Constants.hpp"
 
 // Display Mode
-GLuint displayMode = 1; // 0 = Point, 1 = Face, 2 = Wireframe, 3 = Face + Wireframe
+int displayMode = 1; // 0 = Point, 1 = Face, 2 = Wireframe, 3 = Face + Wireframe
 
 // pointers to model / view / projection matrices
 glm::mat4 model(1);
@@ -138,14 +138,9 @@ int main()
 
 	Shader lightShader(0);
 	PointLight sun(sphereMesh);
-	PointLight sun2(sphereMesh);
 	sun.ChangeBrightnessSettings(0.5f, 0.0002f, 0.000008f);
 	sun.ChangeSpecular(glm::vec3(0.0f));
 	sun.ChangeAmbient(glm::vec3(0.1f));
-	sun2.ChangeBrightnessSettings(0.5f, 0.0002f, 0.000008f);
-	sun2.ChangeSpecular(glm::vec3(0.0f));
-	sun2.ChangeAmbient(glm::vec3(0.1f));
-	sun2.pos = glm::vec3(300.0f, 10.0f, 300.0f);
 	Entity jupiter(sphereMesh),
 		mars(sphereMesh), mercury(sphereMesh),
 		moon(sphereMesh), neptune(sphereMesh),
@@ -169,7 +164,6 @@ int main()
 	mars.scale    = glm::vec3(8.0f);  // 6779 km diameter
 	mercury.scale = glm::vec3(5.0f);  // 4879 km diameter
 	moon.scale    = glm::vec3(3.0f);  // 3474 km diameter
-	sun2.scale = sun.scale;
 
 	{
 		float planetSpan = sun.scale.x;
@@ -188,7 +182,7 @@ int main()
 	earth.SetTexture(earthTexture); jupiter.SetTexture(jupiterTexture); mars.SetTexture(marsTexture);
 	mercury.SetTexture(mercuryTexture); moon.SetTexture(moonTexture); neptune.SetTexture(neptuneTexture);
 	saturn.SetTexture(saturnTexture); sun.SetTexture(sunTexture); uranus.SetTexture(uranusTexture);
-	venus.SetTexture(venusTexture); sun2.SetTexture(sunTexture);
+	venus.SetTexture(venusTexture);
 
 	const float textScale = 25.0f;
 	const float textDistance = 1.5f;
@@ -223,7 +217,7 @@ int main()
 	// Creating Second Window
 	bool enableGui = true;
 	gui.AddCallback([&]() {
-		const float width = 400.0f;
+		const float width = 300.0f;
 		const float height = 400.0f;
 		ImGui::SetNextWindowSize({ width, height }, ImGuiCond_::ImGuiCond_Always);
 		ImGui::SetNextWindowPos(
@@ -232,7 +226,8 @@ int main()
 		ImGui::Begin("Object Properties:");
 
 		ImGui::Text(std::format("FPS: {}", GetFpsCount(window.deltaTime(), 0.5f)).c_str());
-		ImGui::SliderFloat("Planet Rotation Speed", &rotationSpeed, 0.0f, 1000.0f, "%.1f");
+		ImGui::Checkbox("Enable/Disable GUI (Press T)", &enableGui);
+		ImGui::SliderFloat("Rot. Speed", &rotationSpeed, 0.0f, 1000.0f, "%.1f");
 
 		ImGui::ColorEdit4("Title color", glm::value_ptr(text.color), ImGuiColorEditFlags_::ImGuiColorEditFlags_NoInputs);
 
@@ -252,7 +247,8 @@ int main()
 		{
 
 		}
-		ImGui::Checkbox("Enable/Disable GUI (Press T)", &enableGui);
+		const char * const displayModeItems[4] = {"Vertices", "Faces", "Wireframes", "Faces + Wireframes"};
+		ImGui::Combo("Display Mode", &displayMode, displayModeItems, IM_ARRAYSIZE(displayModeItems));
 //		ImGui::EndChildFrame();
 
 		ImGui::End();
@@ -350,7 +346,7 @@ int main()
 		Rendering::Refresh();
 
 		// display mode & activate shader
-		for (auto e : { &earth, &jupiter, &mars, &mercury, &moon, &neptune, &saturn, dynamic_cast<Entity *>(&sun), dynamic_cast<Entity *>(&sun2), &uranus, &venus })
+		for (auto e : { &earth, &jupiter, &mars, &mercury, &moon, &neptune, &saturn, dynamic_cast<Entity *>(&sun), &uranus, &venus })
 		{
 			if (displayMode == 0) Rendering::DrawVertices(*e);
 			if (displayMode & 1)  Rendering::DrawFaces(*e);
