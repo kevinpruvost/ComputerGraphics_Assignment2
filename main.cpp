@@ -97,21 +97,21 @@ int main()
 	LoadShadersAndFonts();
 
 	// Load model
-	//Obj my_obj;
-	//if (!my_obj.TryLoad(Constants::Paths::Models::Rat::objFile))
-	//{
-	//	std::cerr << "Couldn't load " << Constants::Paths::Models::Rat::objFile << std::endl;
-	//	return EXIT_FAILURE;
-	//} 
-	//Mesh mesh = GenerateMesh(my_obj);
-	//Entity rat(mesh, { 1.0f, 1.0f, 0.0f });
-	//Texture ratTexture;
-	//if (!ratTexture.GenerateTexture(Constants::Paths::Models::Rat::texture))
-	//{
-	//	Log::Print(stderr, "%s couldn't be loaded!\n", Constants::Paths::earth);
-	//	return EXIT_FAILURE;
-	//}
-	//rat.SetTexture(ratTexture);
+	Obj my_obj;
+	if (!my_obj.TryLoad(Constants::Paths::Models::Rat::objFile))
+	{
+		std::cerr << "Couldn't load " << Constants::Paths::Models::Rat::objFile << std::endl;
+		return EXIT_FAILURE;
+	} 
+	Mesh ratMesh = GenerateMesh(my_obj);
+	Entity rat(ratMesh, { 1.0f, 1.0f, 0.0f });
+	Texture ratTexture;
+	if (!ratTexture.GenerateTexture(Constants::Paths::Models::Rat::texture))
+	{
+		Log::Print(stderr, "%s couldn't be loaded!\n", Constants::Paths::earth);
+		return EXIT_FAILURE;
+	}
+	rat.SetTexture(ratTexture);
 
 	Mesh sphereMesh = GenerateMeshSphere(1.0f, 36, 18, true);
 	Texture earthTexture, jupiterTexture, marsTexture, mercuryTexture, moonTexture,
@@ -179,10 +179,13 @@ int main()
 		}
 	}
 	moon.pos.x = earth.scale.x + 10.0f;
-	earth.SetTexture(earthTexture); jupiter.SetTexture(jupiterTexture); mars.SetTexture(marsTexture);
-	mercury.SetTexture(mercuryTexture); moon.SetTexture(moonTexture); neptune.SetTexture(neptuneTexture);
-	saturn.SetTexture(saturnTexture); sun.SetTexture(sunTexture); uranus.SetTexture(uranusTexture);
-	venus.SetTexture(venusTexture);
+	const auto planetTextureLambda = [&]() {
+		earth.SetTexture(earthTexture); jupiter.SetTexture(jupiterTexture); mars.SetTexture(marsTexture);
+		mercury.SetTexture(mercuryTexture); moon.SetTexture(moonTexture); neptune.SetTexture(neptuneTexture);
+		saturn.SetTexture(saturnTexture); sun.SetTexture(sunTexture); uranus.SetTexture(uranusTexture);
+		venus.SetTexture(venusTexture);
+	};
+	planetTextureLambda();
 
 	const float textScale = 25.0f;
 	const float textDistance = 1.5f;
@@ -217,6 +220,7 @@ int main()
 	// Creating Second Window
 	bool enableGui = true;
 	int planetFocus = 0;
+	bool theFunnyActivated = false;
 	const std::vector<Entity *> planetsVector = { dynamic_cast<Entity *>(&sun), &mercury, &venus, &earth, &moon, &mars, &jupiter, &saturn, &uranus, &neptune };
 	gui.AddCallback([&]() {
 		const float width = 320.0f;
@@ -247,16 +251,25 @@ int main()
 		const char * const focusModeItems[11] = { "No Focus", "Sun", "Mercury", "Venus", "Earth", "Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"};
 		ImGui::Combo("Display Mode", &displayMode, displayModeItems, IM_ARRAYSIZE(displayModeItems));
 		ImGui::Combo("Planet Focus", &planetFocus, focusModeItems, IM_ARRAYSIZE(focusModeItems));
-		if (planetFocus > 0)
+		if (ImGui::Button(theFunnyActivated ? "Disable The Funny" : "Activate The Funny", {300.0f, 50.0}))
 		{
-			ImGui::LabelText("Camera Position", "X: %.2f, Y: %.2f, Z:%.2f", camera.Position.x, camera.Position.y, camera.Position.z);
-			ImGui::LabelText("Focus Position", "X: %.2f, Y: %.2f, Z:%.2f", planetsVector[planetFocus - 1]->pos.x, planetsVector[planetFocus - 1]->pos.y, planetsVector[planetFocus - 1]->pos.z);
+			theFunnyActivated = !theFunnyActivated;
+			if (theFunnyActivated)
+			{
+				for (Entity * planet : planetsVector)
+				{
+					planet->SetMesh(ratMesh); planet->SetTexture(ratTexture);
+				}
+			}
+			else
+			{
+				for (Entity * planet : planetsVector)
+				{
+					planet->SetMesh(sphereMesh);
+				}
+				planetTextureLambda();
+			}
 		}
-		if (ImGui::Button("Activate the Funny", { 300.0f, 50.0 }))
-		{
-
-		}
-
 		ImGui::End();
 		return true;
 	});
