@@ -1,4 +1,4 @@
-# Assignment 2 of Fundamentals of Computer Graphics: Star Rotation
+# Assignment 2 of Fundamentals of Computer Graphics: Planets Rotation
 
 <p align="center">
   <img src="https://github.com/kevinpruvost/OpenImages/blob/miscellaneous/images/1200px-Tsinghua_University_Logo.svg.png" width=250/><br/><br/>
