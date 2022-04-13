@@ -10,6 +10,9 @@
 // Project includes
 #include "Font_Base.hpp"
 
+/**
+ * @brief Contains and manages every information about Fonts.
+*/
 class Font
 {
 public:

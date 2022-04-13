@@ -11,6 +11,9 @@
 #include "Mesh_Base.hpp"
 #include "OGL_Implementation\Obj.hpp"
 
+/**
+ * @brief Mesh constructed from the Obj class, with the help of .obj files.
+*/
 class Mesh_Obj : public Mesh_Base
 {
 public:
@@ -24,6 +27,10 @@ public:
     GLuint GetFacesEBO() const override;
     bool IsUsingEBO() const override;
 
+    /**
+     * @brief Returns draw mode (glDrawArrays/glDrawElements)
+     * @return draw mode
+    */
     DrawMode GetDrawMode() const override;
 
 private:

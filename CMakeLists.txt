@@ -71,6 +71,13 @@ add_executable(Assignment2
 target_link_libraries(Assignment2 opengl32 glad glfw glm ImGui SOIL freetype
 )
 
+#--------------------------------------------------------------------
+# Hide the console window in visual studio projects - Release
+#--------------------------------------------------------------------
+if(MSVC)
+	set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
+
 # Including root directory & libraries directories
 target_include_directories(Assignment2 PUBLIC
     ${PROJECT_SOURCE_DIR}

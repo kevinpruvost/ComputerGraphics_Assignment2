@@ -16,6 +16,9 @@
     #define LOG_PRINT(fileName, fmt, ...) Log::Print(fileName, "[%s, Line %d]: " ## fmt, __FUNCTION__, __LINE__, __VA_ARGS__)
 #endif
 
+/**
+ * @brief Prints in files or stdout/err/... in a centralized manner.
+*/
 class Log
 {
 public:

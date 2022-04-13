@@ -10,6 +10,10 @@
 // Project includes
 #include "PointLight.hpp"
 
+/**
+ * @brief Manages All variables needed GPU-side and gives everything for shaders
+ * to work with lights.
+*/
 class LightRendering
 {
 public:
@@ -25,6 +29,9 @@ private:
     GLuint __uboLights;
 };
 
+/**
+ * @brief TODO
+*/
 struct SpotLight_Shader
 {
     glm::vec3 position; // 0
@@ -41,6 +48,9 @@ struct SpotLight_Shader
     glm::vec3 specular; // 96
 };
 
+/**
+ * @brief TODO
+*/
 struct DirectionLight_Shader
 {
     glm::vec3 direction;

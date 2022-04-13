@@ -14,6 +14,10 @@
 #include <glm\gtx\euler_angles.hpp>
 #include <glm\gtx\quaternion.hpp>
 
+/**
+ * @brief Quaternion structure, serves for rotation purposes.
+ * Almost every inputs user-side are expressed in degrees from the Yaw Pitch Roll coordinate system.
+*/
 class Quaternion : public glm::quat
 {
 public:
@@ -27,9 +31,25 @@ public:
     operator glm::quat & ();
     operator const glm::quat & () const;
 
+    /**
+     * @brief Rotates on X, Y, Z axis (degrees)
+     * @param rotation 
+    */
     void Rotate(const glm::vec3 & rotation);
+    /**
+     * @brief Rotates on X axis (degrees)
+     * @param rotation 
+    */
     void RotateX(const float rotation);
+    /**
+     * @brief Rotates on Y axis (degrees)
+     * @param rotation 
+    */
     void RotateY(const float rotation);
+    /**
+     * @brief Rotates on Z axis (degrees)
+     * @param rotation 
+    */
     void RotateZ(const float rotation);
 
 public:

@@ -14,9 +14,19 @@
 // C++ includes
 #include <vector>
 
+/**
+ * @brief Sphere mesh cosntructed from its parameters.
+*/
 class Mesh_Sphere : public Mesh_Base
 {
 public:
+    /**
+     * @brief Default Sphere Constructor
+     * @param radius
+     * @param sectorCount 
+     * @param stackCount 
+     * @param smooth 
+    */
     Mesh_Sphere(float radius = 1.0f, int sectorCount = 36, int stackCount = 18, bool smooth = true);
     ~Mesh_Sphere();
 

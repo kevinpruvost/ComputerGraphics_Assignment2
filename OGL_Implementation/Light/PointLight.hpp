@@ -1,5 +1,5 @@
 /*****************************************************************//**
- * \file   Light.hpp
+ * \file   PointLight.hpp
  * \brief  Light class
  * 
  * \author Kevin Pruvost (pruvostkevin0@gmail.com)
@@ -10,6 +10,10 @@
 // Project includes
 #include "OGL_Implementation\Entity\Entity.hpp"
 
+/**
+ * @brief Structure aligned with the std140 norm that contains
+ * parameters of point lights for shaders.
+*/
 struct PointLight_Shader
 {
     glm::vec3 position; // 0
@@ -90,6 +94,9 @@ public:
         const glm::vec3 & specular = glm::vec3(1.0f));
     ~PointLight();
 
+    /**
+     * @brief Maximum count of Point Lights in a scene.
+    */
     static constexpr const size_t maxPointLightsCount = 128;
 
     virtual glm::mat4 GetModelMatrix(bool ignoreRotation = false, bool ignoreScale = false) const override;

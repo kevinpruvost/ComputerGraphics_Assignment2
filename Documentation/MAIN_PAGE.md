@@ -1,4 +1,4 @@
-# Assignment 1 Documentation
+# Assignment 2 Documentation
 
 Author: Kevin Pruvost (pruvostkevin0@gmail.com)
 
@@ -6,23 +6,67 @@ Author: Kevin Pruvost (pruvostkevin0@gmail.com)
 
 ![Tutorial Dark/Light Mode](change_theme.gif)
 
-## Main classes
-
-- [Camera](class_camera.html)
-- [Entity](class_entity.html)
-- [GUI](class_g_u_i.html)
-- [Input](class_input.html)
-- [Mesh](class_mesh.html)
-- [Mesh_Base](class_mesh__base.html)
-- [Obj](class_obj.html)
-- [Shader](class_shader.html)
-- [TriFace](class_tri_face.html)
-- [Vertex](class_vertex.html)
-- [Window](class_window.html)
-
 ## Quick Demo
 
 To test out the project quickly, there will be a release on Github
 with an executable file to launch directly.
 
-![Demo](recording.gif)
+\htmlonly
+
+<iframe width="800" height="600" src="https://www.youtube.com/embed/H9LDy9kiTIQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+\endhtmlonly
+
+## Classes
+
+### DebugInfo
+
+- [Log](class_log.html)
+
+### Shader
+
+- [Shader](class_shader.html)
+
+### Mesh
+
+- [Face](struct_face.html)
+- [Vertex](struct_vertex.html)
+- [VertexNormalTexture](struct_vertex_normal_texture.html)
+
+- [Mesh_Base](class_mesh__base.html)
+- [Mesh_Sphere](class_mesh___sphere.html)
+- [Mesh_Obj](class_mesh___obj.html)
+- [Mesh](class_mesh.html)
+
+### Light
+
+- [LightRendering](class_light_rendering.html)
+- [PointLight](class_point_light.html)
+
+- [PointLight_Shader](struct_point_light___shader.html)
+
+### Entity
+
+- [Entity](class_entity.html)
+- [Entity_Skeleton](class_entity___skeleton.html)
+
+### Text
+
+- [Character](class_character.html)
+- [Font_Base](class_font___base.html)
+- [Font](class_font.html)
+- [Text2D](class_text2_d.html)
+- [Text3D](class_text3_d.html)
+
+### Rendering
+
+### General
+
+- [Camera](class_camera.html)
+- [GUI](class_g_u_i.html)
+- [Input](class_input.html)
+- [Obj](class_obj.html)
+- [OpenGL_Timer](class_open_g_l___timer.html)
+- [Texture](class_texture.html)
+- [Window](class_window.html)
+- [Quaternion](class_quaternion.html)
