@@ -13,7 +13,7 @@ with an executable file to launch directly.
 
 \htmlonly
 
-<iframe width="800" height="600" src="https://www.youtube.com/embed/H9LDy9kiTIQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/wFGgL5PE7sc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 \endhtmlonly
 
@@ -26,6 +26,7 @@ with an executable file to launch directly.
 ### Shader
 
 - [Shader](class_shader.html)
+- [Shader_Base](class_shader__base.html)
 
 ### Mesh
 
@@ -59,6 +60,8 @@ with an executable file to launch directly.
 - [Text3D](class_text3_d.html)
 
 ### Rendering
+
+- [Rendering](class_rendering.html)
 
 ### General
 
