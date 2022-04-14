@@ -38,7 +38,7 @@ For my Assignment, I got all these points covered:
 
 ## How to use it
 
-![Untitled](Assignment%204c82e/Untitled.png)
+[![Demo](embed.png)](https://youtu.be/wFGgL5PE7sc)
 
 You can launch the `Assignment2.exe`directly, if you already have Visual C++ Redistribuable.
 
